@@ -49,6 +49,18 @@ long *pl = (long *)&f;
 SwapBytes(*pl);
 }
 
+#if defined(VST_2_4_EXTENSIONS)
+void CFxBase::SwapBytes(VstInt32 &vi)
+{
+unsigned char *b = (unsigned char *)&vi;
+VstInt32 intermediate =  ((VstInt32)b[0] << 24) |
+                         ((VstInt32)b[1] << 16) |
+                         ((VstInt32)b[2] << 8) |
+                         (VstInt32)b[3];
+vi = intermediate;
+}
+#endif
+
 
 /*===========================================================================*/
 /* CFxBank class members                                                     */
@@ -434,6 +446,10 @@ sName = NULL;
 bEditOpen = false;
 bNeedIdle = false;
 bWantMidi = false;
+bInSetProgram = false;
+nIndex = -1;
+nUniqueId = 0;
+pMasterEffect = NULL;
 
 #ifdef WIN32
 
@@ -488,19 +504,44 @@ AEffect *(*pMain)(long (*audioMaster)(AEffect *effect,
 
 #ifdef WIN32
 
-hModule = ::LoadLibrary(name);          /* try to load the DLL               */
+__try
+  {
+  hModule = ::LoadLibrary(name);          /* try to load the DLL               */
+  }
+__except(EXCEPTION_EXECUTE_HANDLER)
+  {
+  hModule = NULL;
+  }
 if (hModule)                            /* if there, get its main() function */
+  {
   pMain = (AEffect * (*)(long (*)(AEffect *,long,long,long,void *,float)))
-          ::GetProcAddress(hModule, "main");
+          ::GetProcAddress(hModule, "VSTPluginMain");
+  if (!pMain)
+    pMain = (AEffect * (*)(long (*)(AEffect *,long,long,long,void *,float)))
+            ::GetProcAddress(hModule, "main");
+  }
+
+if (pMain)                              /* initialize effect                 */
+  {
+  __try
+    {
+    pEffect = pMain(pHost->AudioMasterCallback);
+    }
+  __except(EXCEPTION_EXECUTE_HANDLER)
+    {
+    pEffect = NULL;
+    }
+  }
 
 #elif MAC
 
 // yet to be done
 
-#endif
-
 if (pMain)                              /* initialize effect                 */
   pEffect = pMain(pHost->AudioMasterCallback);
+
+#endif
+
                                         /* check for correctness             */
 if (pEffect && (pEffect->magic != kEffectMagic))
   pEffect = NULL;
@@ -511,7 +552,7 @@ if (pEffect)
   if (sName)
     strcpy(sName, name);
 #ifdef WIN32
-  char *p = strrchr(name, '\\');
+  const char *p = strrchr(name, '\\');
   if (p)
     {
     sDir = new char[p - name + 1];
@@ -670,6 +711,21 @@ pEffect->processReplacing(pEffect, inputs, outputs, sampleframes);
 }
 
 /*****************************************************************************/
+/* EffProcessDoubleReplacing : calls an effect's processDoubleReplacing() f. */
+/*****************************************************************************/
+
+void CEffect::EffProcessDoubleReplacing(double **inputs, double **outputs, long sampleFrames)
+{
+if ((!pEffect) ||
+    (!(pEffect->flags & effFlagsCanDoubleReplacing)))
+  return;
+
+#if defined(VST_2_4_EXTENSIONS)
+pEffect->processDoubleReplacing(pEffect, inputs, outputs, sampleFrames);
+#endif
+}
+
+/*****************************************************************************/
 /* EffSetParameter : calls an effect's setParameter() function               */
 /*****************************************************************************/
 
@@ -729,6 +785,7 @@ vstTimeInfo.flags = 0;
 
 aEffects = 0;                           /* no effects loaded                 */
 naEffects = nmaEffects = 0;
+pLoading = NULL;
 
 pHost = this;                           /* install this instance as the one  */
 }
@@ -819,7 +876,7 @@ switch (opcode)
   case audioMasterVersion :
     return OnGetVersion(nEffect);
   case audioMasterCurrentId :
-    return nEffect;
+    return OnGetCurrentUniqueId(nEffect);
   case audioMasterIdle :
     return OnIdle(nEffect);
   case audioMasterPinConnected :
@@ -848,11 +905,9 @@ switch (opcode)
   case audioMasterSizeWindow :
     return OnSizeWindow(nEffect, index, value);
   case audioMasterGetSampleRate :
-    OnUpdateSampleRate(nEffect);
-    return 1;
+    return OnUpdateSampleRate(nEffect);
   case audioMasterGetBlockSize :
-    OnUpdateBlockSize(nEffect);
-    return 1;
+    return OnUpdateBlockSize(nEffect);
   case audioMasterGetInputLatency :
     return OnGetInputLatency(nEffect);
   case audioMasterGetOutputLatency :
@@ -891,10 +946,14 @@ switch (opcode)
   case audioMasterSetOutputSampleRate :
     OnSetOutputSampleRate(nEffect, opt);
     return 1;
+#ifdef VST_2_4_EXTENSIONS
+  case audioMasterGetOutputSpeakerArrangement :
+#else
   case audioMasterGetSpeakerArrangement :
-    return OnGetSpeakerArrangement(nEffect, 
-                                   (VstSpeakerArrangement *)value,
-                                   (VstSpeakerArrangement *)ptr);
+#endif
+    return OnGetOutputSpeakerArrangement(nEffect, 
+                                         (VstSpeakerArrangement *)value,
+                                         (VstSpeakerArrangement *)ptr);
   case audioMasterGetVendorString :
     return OnGetVendorString((char *)ptr);
   case audioMasterGetProductString :
@@ -991,6 +1050,18 @@ pEffect->EffProcessReplacing(inputs, outputs, sampleframes);
 }
 
 /*****************************************************************************/
+/* EffProcessDoubleReplacing : calls an effect's processDoubleReplacing() f. */
+/*****************************************************************************/
+
+void CVSTHost::EffProcessDoubleReplacing(int nEffect, double **inputs, double **outputs, long sampleFrames)
+{
+CEffect *pEffect = GetAt(nEffect);
+if (!pEffect)
+  return;
+pEffect->EffProcessDoubleReplacing(inputs, outputs, sampleFrames);
+}
+
+/*****************************************************************************/
 /* EffSetParameter : calls an effect's setParameter() function               */
 /*****************************************************************************/
 
@@ -1030,6 +1101,9 @@ for (int i = GetSize() - 1;
   if (paEffect->pEffect == pEffect)
     return i;
   }
+if (pLoading)
+  return eEffLoading;
+
 return -1;
 }
 
@@ -1084,14 +1158,18 @@ for (int i = 0; i < j; i++)
 /* LoadPlugin : loads and initializes a plugin                               */
 /*****************************************************************************/
 
-int CVSTHost::LoadPlugin(const char * sName)
+int CVSTHost::LoadPlugin(const char * sName, int nUniqueId)
 {
 CEffect *pEffect = CreateEffect();      /* allocate an effect                */
+pEffect->nUniqueId = nUniqueId;         /* set it's UID                      */
+pLoading = pEffect;                     /* remember we're loading this one   */
 if (!pEffect->Load(sName))              /* try to load the thing             */
   {
   delete pEffect;                       /* upon error delete the object      */
+  pLoading = NULL;                      /* reset pointer to loading effect   */
   return -1;                            /* and regretfully return error      */
   }
+pLoading = NULL;                        /* reset pointer to loading effect   */
 
 int nIndex;                             /* look for empty slot in array      */
 for (nIndex = GetSize() - 1; nIndex >= 0; nIndex--)
@@ -1122,15 +1200,19 @@ if (nIndex < 0)                         /* if no empty slot available        */
   }
 else                                    /* otherwise                         */
   aEffects[nIndex] = pEffect;           /* put into free slot                */
+pEffect->SetIndex(nIndex);              /* tell effect where it is           */
 
 pEffect->EffOpen();                     /* open the effect                   */
 pEffect->EffSetSampleRate(fSampleRate); /* adjust its sample rate            */
 // this is a safety measure against some plugins that only set their buffers
 // ONCE - this should ensure that they allocate a buffer that's large enough
 pEffect->EffSetBlockSize(11025);
-pEffect->EffMainsChanged(true);         /* then force resume.                */
+// deal with changed behaviour in V2.4 plugins that don't call wantEvents()
+pEffect->bWantMidi = (pEffect->EffCanDo("receiveVstMidiEvent") == 1);
+pEffect->EffResume();                   /* then force resume.                */
+pEffect->EffSuspend();                  /* suspend again...                  */
 pEffect->EffSetBlockSize(lBlockSize);   /* and block size                    */
-pEffect->EffMainsChanged(true);         /* then force resume.                */
+pEffect->EffResume();                   /* then force resume.                */
 return nIndex;                          /* return new effect's index         */
 }
 
@@ -1193,14 +1275,32 @@ for (int i = 0; i < j; i++)
 }
 
 /*****************************************************************************/
+/* ProcessDoubleReplacing : calls an effect's processDoubleReplacing() f.    */
+/*****************************************************************************/
+/* NB: this is a horribly inadequate method, doesn't allow routing etc.      */
+/*     just a convenient little way of providing data to the effects...      */
+/*****************************************************************************/
+
+void CVSTHost::ProcessDoubleReplacing(double **inputs, double **outputs, long sampleframes)
+{
+int j = GetSize();                      /* pass it on to all loaded effects  */
+for (int i = 0; i < j; i++)
+  EffProcessDoubleReplacing(i, inputs, outputs, sampleframes);
+}
+
+/*****************************************************************************/
 /* OnCanDo : returns whether the host can do a specific action               */
 /*****************************************************************************/
 
 bool CVSTHost::OnCanDo(const char *ptr)
 {
-if ((!strcmp(ptr, "sendVstMidiEvent")) ||
+if ((!strcmp(ptr, "sendVstEvents")) ||
+    (!strcmp(ptr, "sendVstMidiEvent")) ||
+    (!strcmp(ptr, "receiveVstEvents")) ||
     (!strcmp(ptr, "receiveVstMidiEvent")) ||
-    (!strcmp(ptr, "sizeWindow")) )
+    (!strcmp(ptr, "sizeWindow")) ||
+    (!strcmp(ptr, "sendVstMidiEventFlagIsRealtime")) ||
+    0)
   return true;
 return false;                           /* per default, no.                  */
 }
@@ -1330,6 +1430,18 @@ return lBlockSize;
 }
 
 /*****************************************************************************/
+/* OnGetCurrentUniqueId : passes back the effect's current unique ID         */
+/*****************************************************************************/
+
+long CVSTHost::OnGetCurrentUniqueId(int nEffect)
+{
+CEffect *pEffect = GetAt(nEffect);
+if (pEffect)
+  return pEffect->OnGetUniqueId();
+return 0;
+}
+
+/*****************************************************************************/
 /* OnGetDirectory : called when the effect calls getDirectory()              */
 /*****************************************************************************/
 
@@ -1359,7 +1471,9 @@ return false;
 
 long CVSTHost::OnGetVersion(int nEffect)
 {
-#if defined(VST_2_3_EXTENSIONS)
+#if defined(VST_2_4_EXTENSIONS)
+return 2400L;
+#elif defined(VST_2_3_EXTENSIONS)
 return 2300L;
 #elif defined(VST_2_2_EXTENSIONS)
 return 2200L;

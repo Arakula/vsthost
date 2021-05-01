@@ -48,7 +48,7 @@ public:
     CString GetDisplayName()
       {
       char szBuf[256] = "";
-      if (EffGetProductString(szBuf))
+      if ((EffGetProductString(szBuf)) && (*szBuf))
         return szBuf;
       CString sCutName(sName);
       int nIdx = sCutName.ReverseFind('\\');
@@ -100,7 +100,7 @@ public:
 
 	float * GetOutputBuffer(int nBuf)
       {
-      if (nBuf < pEffect->numOutputs)
+      if (nBuf < ((nAllocatedOutbufs) ? nAllocatedOutbufs : pEffect->numOutputs))
         // outBufs allocation isn't checked here; this is intentional.
         // We rely on a sensible implementation that doesn't set
         // input buffers before initialization is finished (which
@@ -185,8 +185,10 @@ public:
     virtual CEffect * CreateEffect() { return new CSmpEffect(this); }
     // overridden callback functions
 	virtual long OnAudioMasterCallback(int nEffect, long opcode, long index, long value, void *ptr, float opt);
+    virtual long OnGetAutomationState(int nEffect) { return kVstAutomationReadWrite; }
 	virtual bool OnSetParameterAutomated(int nEffect, long index, float value);
 	virtual bool OnCanDo(const char *ptr);
+	virtual long OnIdle(int nEffect=-1);
     virtual bool OnOpenFileSelector (int nEffect, VstFileSelect *ptr);
     virtual bool OnCloseFileSelector (int nEffect, VstFileSelect *ptr);
     virtual bool OnGetChunkFile(int nEffect, void * nativePath);

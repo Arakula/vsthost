@@ -29,6 +29,8 @@ else
 
 if (!*szLogName)
   {
+  if (!AfxGetApp()->m_pszAppName)
+    return;
   strcpy(szLogName, AfxGetApp()->m_pszAppName);
   strcat(szLogName, ".trace");
   bStamp = true;

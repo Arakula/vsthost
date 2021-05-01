@@ -444,6 +444,8 @@ if (pEffect->pEffect->flags & effFlagsExtIsAsync)
   m_wndView.AddString("  For external dsp; plug returns immediately from process()");
 if (pEffect->pEffect->flags & effFlagsExtHasBuffer)
   m_wndView.AddString("  For external dsp; has its own output buffer");
+if (pEffect->pEffect->flags & effFlagsCanDoubleReplacing)
+  m_wndView.AddString("  Supports in place double-precision output");
 
 if (pEffect->pEffect->initialDelay)
   {
@@ -497,6 +499,18 @@ if (i >= 1)
       break;
     case kPlugSurroundFx :
       sOut = "SurroundFx";
+      break;
+    case kPlugCategRestoration :
+      sOut = "Restoration";
+      break;
+    case kPlugCategOfflineProcess :
+      sOut = "Offline Processing";
+      break;
+    case kPlugCategShell :
+      sOut = "Shell Container";
+      break;
+    case kPlugCategGenerator :
+      sOut = "Generator";
       break;
     default :
       sOut.Format("%d", i);

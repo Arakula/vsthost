@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/* MIDIDEV.CPP : MFC MIDI Keyboard MIDI Device Selection                     */
+/* MIDIDEV.CPP : MIDI Device Selection                                       */
 /*****************************************************************************/
 /*                                                                           */
 /* $Archive::                                                              $ */
@@ -19,7 +19,6 @@
 
 #include "stdafx.h"                     /* MFC include                       */
 
-#include "resource.h"                   /* resource definitions              */
 #include "specmidi.h"                   /* Special MIDI classes              */
 #include "mididev.h"                    /* private prototypes                */
 

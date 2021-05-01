@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "vsthost.h"
 #include "AsioChannelSelectDialog.h"
 
 #ifdef _DEBUG

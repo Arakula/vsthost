@@ -194,33 +194,6 @@ class CMidiMsg
   };
 
 /*****************************************************************************/
-/* CMidiQueue : queue of MIDI SysEx messages                                 */
-/*****************************************************************************/
-
-class CMidiQueue
-  {
-  public:
-    CMidiQueue(CWnd * pWnd = NULL);
-    ~CMidiQueue();
-
-    void Queue(CMidiMsg &msg, BOOL bOutput = TRUE);
-    void DeQueue(const MSG * pMsg, CMidiMsg &msg, BOOL &bOutput);
-    void AttachTo(CWnd *pWnd) { pInformWnd = pWnd; }
-    void UseSend(BOOL bUseSend = TRUE) { bSend = bUseSend; }
-  protected:
-    CWnd * pInformWnd;
-    struct _Queue
-      {
-      WORD bAdding;
-      WORD QWrite;
-      BYTE bQueue[1];
-      } FAR * lpQueue;
-    HGLOBAL hglbQueue;
-    BOOL bSend;
-
-  };
-
-/*****************************************************************************/
 /* CMidiDevice : MIDI Device base class                                      */
 /*****************************************************************************/
 

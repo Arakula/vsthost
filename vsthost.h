@@ -13,7 +13,6 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"       // main symbols
 #include "SmpVSTHost.h"	// Added by ClassView
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,6 +88,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	void OnEffIdle(int nEffect = -1);
 	CString sWaveMapper;
     void SetMidiKeybDlg(CWnd *pWnd) { pMidiKeyb = pWnd; }
 	void SendResult(float **pBuffers, int nLength);
@@ -98,7 +98,7 @@ public:
     BOOL IsEngineRunning() { return bEngRunning; }
 	BOOL SetTimer(UINT nMSecs=0);
 	CMDIChildWnd * CreateChild(CRuntimeClass *pClass, UINT nResource, HMENU hMenu = NULL, HACCEL hAccel = NULL);
-	BOOL LoadEffect(LPCSTR lpszFileName, int *pnEffect=NULL);
+	BOOL LoadEffect(LPCSTR lpszFileName, int *pnEffect=NULL, int nUniqueId = 0);
 	void FillPopup(CMenu* pPopupMenu, int nEffect);
     float * GetEmptyBuffer() { return emptyBuf[0]; }
 };

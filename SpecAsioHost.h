@@ -10,7 +10,6 @@
 #endif // _MSC_VER > 1000
 
 #include "AsioHost.h"
-#include "resource.h"
 
 // this is a specialized version for VSTHost's MFC sample implementation
 class CWorkThread;

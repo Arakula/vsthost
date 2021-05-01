@@ -16,7 +16,6 @@
 /*****************************************************************************/
 
 #include "stdafx.h"
-#include "resource.h"
 #include "mfcwave.h"
 
 #ifdef _DEBUG

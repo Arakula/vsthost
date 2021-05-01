@@ -18,11 +18,9 @@
 #include "stdafx.h"                     /* MFC include                       */
 #include <math.h>
 
-#include "resource.h"                   /* Project resources                 */
 #include "SpecWave.h"                   /* private definitions               */
 
 #include "WorkThread.h"                 /* the work thread                   */
-#include "vsthost.h"                    /* application specific header       */
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -35,8 +33,6 @@ static char THIS_FILE[]=__FILE__;
 /*****************************************************************************/
 /* Definitions                                                               */
 /*****************************************************************************/
-
-#define GetApp()  ((CVsthostApp *)AfxGetApp())
 
 #define WAVEOUTBUFSIZE   38400L         /* length of Wave output buffer      */
 // Attention: this is laid out for a 1/20 second, 96KHz, 32 bit maximum...

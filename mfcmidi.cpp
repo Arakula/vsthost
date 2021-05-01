@@ -16,7 +16,6 @@
 /*****************************************************************************/
 
 #include "stdafx.h"                     /* MFC include                       */
-#include "resource.h"                   /* Project resources                 */
 #include "mfcmidi.h"                    /* private definitions               */
 
 #ifdef __WATCOMC__
@@ -136,6 +135,8 @@ int i, j;
                                         /* remove all finished ones          */
 for (i = 0; i < MAX_DETACHED; i++)
   {
+  if (!lpDetached[i])                   /* stop upon first free one          */
+    break;
   if (lpDetached[i]->dwFlags & MHDR_DONE)
     {
     midiOutUnprepareHeader(hdDetached[i], lpDetached[i], sizeof(MIDIHDR));
@@ -155,8 +156,6 @@ for (i = 0; i < MAX_DETACHED; i++)
     i--;
     continue;
     }
-  if (!lpDetached[i])                   /* stop upon first free one          */
-    break;
   }
 
 TRACE1("CMidiMsg::CleanupDetached(): %d detached messages waiting\n", i);
@@ -344,153 +343,6 @@ return (WORD)                           /* otherwise return length of buffer */
     (lpHdr->dwBytesRecorded ?
         lpHdr->dwBytesRecorded :
         lpHdr->dwBufferLength);
-}
-
-/*===========================================================================*/
-/* Class CMidiQueue                                                          */
-/*===========================================================================*/
-
-/*****************************************************************************/
-/* CMidiQueue : constructor                                                  */
-/*****************************************************************************/
-
-CMidiQueue::CMidiQueue (CWnd * pWnd)
-{
-pInformWnd = pWnd;                      /* set information window            */
-bSend = FALSE;                          /* use PostMsg by default            */
-                                        /* allocate queue memory             */
-hglbQueue = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE | GMEM_ZEROINIT, 65536L);
-if (hglbQueue)
-  {
-  lpQueue = (_Queue *)
-      GlobalLock(hglbQueue);            /* lock it in memory                 */
-  if (!lpQueue)
-    {
-    GlobalUnlock(hglbQueue);
-    GlobalFree(hglbQueue);
-    hglbQueue = NULL;
-    }
-  }
-}
-
-/*****************************************************************************/
-/* ~CMidiQueue : destructor                                                  */
-/*****************************************************************************/
-
-CMidiQueue::~CMidiQueue ()
-{
-if (hglbQueue)                          /* if incoming message buffer there  */
-  {
-  GlobalUnlock(hglbQueue);              /* unlock it.                        */
-  GlobalFree(hglbQueue);                /* remove it.                        */
-  }
-}
-
-/*****************************************************************************/
-/* Queue : queues a MIDI message and informs the window                      */
-/*****************************************************************************/
-
-void CMidiQueue::Queue(CMidiMsg & msg, BOOL bOutput)
-{
-if (!pInformWnd)
-  return;
-
-static LPMIDIHDR pHdr;
-static int msglen;
-
-msglen = msg.Length();
-if (msglen <= 3)
-  {
-  static DWORD dwMsg;                   /* static to consume less stack      */
-                                        /* (important in 16-bit mode)        */
-  dwMsg = msg;
-  dwMsg &= 0x00ffffffL;
-  if (bOutput)
-    dwMsg |= 0x01000000L;
-  pInformWnd->PostMessage(MM_MIM_DATA, 0, dwMsg);
-  return;
-  }
-
-if ((!lpQueue) || (lpQueue->bAdding))   /* if recursing or no queue there    */
-  return;                               /* no action                         */
-
-lpQueue->bAdding = TRUE;
-                                        /* clean queue                       */
-pHdr = (LPMIDIHDR)lpQueue->bQueue;
-while ((lpQueue->QWrite) &&             /* remove all printed elements       */
-       (((LPMIDIHDR)lpQueue->bQueue)->dwFlags & MHDR_DONE))
-  {
-  lpQueue->QWrite -= (WORD)(sizeof(MIDIHDR) + pHdr->dwBufferLength);
-  if (lpQueue->QWrite)                  /* if more data queued               */
-    memcpy(lpQueue->bQueue,             /* remove element from queue         */
-        lpQueue->bQueue + sizeof(MIDIHDR) + pHdr->dwBufferLength,
-        lpQueue->QWrite);
-  }
-
-                                        /* if overflow would occur or done   */
-if ((msglen <= 3) ||
-    ((WORD)(lpQueue->QWrite + sizeof(MIDIHDR) + msglen) < lpQueue->QWrite))
-  {
-  lpQueue->bAdding = FALSE;             /* reset adding flag                 */
-  return;                               /* forget it.                        */
-  }
-
-static WORD wOldOff;
-wOldOff = lpQueue->QWrite;
-pHdr = (LPMIDIHDR)(lpQueue->bQueue + wOldOff);
-pHdr->dwBufferLength =                  /* generate internal header          */
-  pHdr->dwBytesRecorded = msglen;
-pHdr->dwUser = bOutput;
-pHdr->dwFlags = 0;
-pHdr->lpNext = NULL;
-pHdr->reserved = 0;
-pHdr->dwOffset = 0;
-memset(pHdr->dwReserved, 0, sizeof(pHdr->dwReserved));
-pHdr->lpData = (LPSTR)(lpQueue->bQueue + wOldOff + sizeof(MIDIHDR));
-memcpy(pHdr->lpData, (char *)msg, msglen);
-lpQueue->QWrite += sizeof(MIDIHDR) + msglen;
-
-lpQueue->bAdding = FALSE;               /* allow access to the queue         */
-if (bSend)
-  pInformWnd->SendMessage(MM_MIM_LONGDATA,
-              0, (LPARAM)(lpQueue->bQueue + wOldOff));
-else
-  pInformWnd->PostMessage(MM_MIM_LONGDATA,
-              0, (LPARAM)(lpQueue->bQueue + wOldOff));
-}
-
-/*****************************************************************************/
-/* DeQueue : dequeues a queued midi message                                  */
-/*****************************************************************************/
-
-void CMidiQueue::DeQueue
-    (
-    const MSG * pMsg,
-    CMidiMsg & msg,
-    BOOL & bOutput
-    )
-{
-if (pMsg->message == MM_MIM_DATA)
-  {
-  msg = (DWORD)(pMsg->lParam);
-  bOutput = ((pMsg->lParam & 0xff000000L) == 0x01000000L);
-  }
-else
-  {
-  LPMIDIHDR lphdr = (LPMIDIHDR)pMsg->lParam;
-  if (!lphdr)                           /* if erroneous or invalid pointer   */
-    {
-    msg = (DWORD)0;
-    bOutput = FALSE;
-    }
-  
-  if (lphdr->dwBytesRecorded)
-    {
-    msg = lphdr;                        /* generate MIDI message             */
-    bOutput = (BOOL)lphdr->dwUser;
-    lphdr->dwFlags |= MHDR_DONE;
-    }
-  }
 }
 
 /*===========================================================================*/

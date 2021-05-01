@@ -1,8 +1,8 @@
-// ProgNameDlg.cpp : implementation file
-//
+/*****************************************************************************/
+/* ProgNameDlg.cpp : implementation file                                     */
+/*****************************************************************************/
 
 #include "stdafx.h"
-#include "vsthost.h"
 #include "ProgNameDlg.h"
 
 #ifdef _DEBUG
@@ -11,9 +11,13 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CProgNameDlg dialog
+/*===========================================================================*/
+/* CProgNameDlg dialog                                                       */
+/*===========================================================================*/
 
+/*****************************************************************************/
+/* CProgNameDlg : constructor                                                */
+/*****************************************************************************/
 
 CProgNameDlg::CProgNameDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CProgNameDlg::IDD, pParent)
@@ -23,6 +27,9 @@ CProgNameDlg::CProgNameDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
+/*****************************************************************************/
+/* DoDataExchange : data exchange between dialog and object                  */
+/*****************************************************************************/
 
 void CProgNameDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -32,12 +39,12 @@ void CProgNameDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
+/*****************************************************************************/
+/* CProgNameDlg message map                                                  */
+/*****************************************************************************/
 
 BEGIN_MESSAGE_MAP(CProgNameDlg, CDialog)
 	//{{AFX_MSG_MAP(CProgNameDlg)
 		// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CProgNameDlg message handlers

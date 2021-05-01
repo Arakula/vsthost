@@ -7,7 +7,6 @@
 #define USE_DSOUND 0                    /* flag whether to use DirectSound   */
 // currently commented out since it doesn't work yet
 
-#include "vsthost.h"
 #include "specwave.h"                   /* Special Wave classes              */
 #if USE_DSOUND
 #include "SpecDSound.h"                 /* Special DirectSound classes       */
@@ -164,7 +163,7 @@ for (i = 0; i <= DSListOut.GetUpperBound(); i++)
 #endif
 
 #ifdef __ASIO_H
-CSpecAsioHost *pAsioHost = ((CVsthostApp *)AfxGetApp())->pAsioHost;
+CSpecAsioHost *pAsioHost = GetApp()->pAsioHost;
 if (pAsioHost)
   {
   char *drvs[40];
@@ -187,7 +186,7 @@ if (c->SelectString(-1, OutName) == CB_ERR)
 
 c = (CComboBox *)GetDlgItem(IDC_BUFSIZE);
 CString s;
-int nSetIdx = 6;                        /* default to 1/10 second buffer     */
+int nSetIdx = -1;                       /* default to 1/10 second buffer     */
 for (i = 0; i < (sizeof(nBufSizes) / sizeof(nBufSizes[0])); i++)
   {
   s.Format("%d samples    (%d b/s)", nBufSizes[i], 44100 / nBufSizes[i]);
@@ -195,7 +194,13 @@ for (i = 0; i < (sizeof(nBufSizes) / sizeof(nBufSizes[0])); i++)
   if (nBufSizes[i] == nBufSize)
     nSetIdx = nIdx;
   }
-c->SetCurSel(nSetIdx);
+if (nSetIdx == -1)                      /* if not a predefined buffer size,  */
+  {
+  s.Format("%d samples (nonstandard)", nBufSize);
+  c->SetWindowText(s);
+  }
+else
+  c->SetCurSel(nSetIdx);
 OnSelchangeOutputport();
 return CDialog::OnInitDialog();
 }
@@ -211,6 +216,10 @@ GetDlgItemText(IDC_OUTPUTPORT, OutName);
 CString sBs;
 GetDlgItemText(IDC_BUFSIZE, sBs);
 nBufSize = atoi(sBs);
+if (nBufSize < 16)                      /* reasonable values, please!        */
+  nBufSize = 16;
+else if (nBufSize > 11025)
+  nBufSize = 11025;
 CDialog::OnOK();
 }
 

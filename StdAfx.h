@@ -50,6 +50,11 @@ void DebugFileTrace(LPCSTR lpszFormat, ...);
 #include "asiodrivers.h"
 #endif
 
+#include "vsthost.h"
+#include "resource.h"
+
+inline CVsthostApp *GetApp() { return (CVsthostApp *)AfxGetApp(); }
+
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 

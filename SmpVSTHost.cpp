@@ -10,8 +10,8 @@
 #include "EffSecWnd.h"
 #include "specmidi.h"
 #include "specwave.h"
-#include "SmpVSTHost.h"
 #include "vstsysex.h"
+#include "SmpVSTHost.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -19,7 +19,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-#define GetApp()  ((CVsthostApp *)AfxGetApp())
+#pragma intrinsic(memcpy,memset)
 
 /*===========================================================================*/
 /* CSmpVSTHost class members                                                 */
@@ -80,169 +80,190 @@ long CSmpVSTHost::OnAudioMasterCallback
 {
 #if defined(_DEBUG) || defined(_DEBUGFILE)
 
+char szDebug[1024];
+int nLen;
 switch (opcode)
   {
   case audioMasterAutomate :
-    TRACE1("callback: %d audioMasterAutomate\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterAutomate %d, %f", nEffect, index, opt);
     break;
   case audioMasterVersion :
-    TRACE1("callback: %d audioMasterVersion\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterVersion", nEffect);
     break;
   case audioMasterCurrentId :
-    TRACE1("callback: %d audioMasterCurrentId\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterCurrentId", nEffect);
     break;
   case audioMasterIdle :
-    TRACE1("callback: %d audioMasterIdle\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterIdle", nEffect);
     break;
   case audioMasterPinConnected :
-    TRACE1("callback: %d audioMasterPinConnected\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterPinConnected %d", nEffect, index);
     break;
                                         /* VST 2.0 additions...              */
   case audioMasterWantMidi :
-    TRACE1("callback: %d audioMasterWantMidi\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterWantMidi %d", nEffect, value);
     break;
   case audioMasterGetTime :
-    TRACE1("callback: %d audioMasterGetTime\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetTime %d", nEffect, value);
     break;
   case audioMasterProcessEvents :
-    TRACE1("callback: %d audioMasterProcessEvents\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterProcessEvents %d", nEffect, ((VstEvents *)ptr)->numEvents);
     break;
   case audioMasterSetTime :
-    TRACE1("callback: %d audioMasterSetTime\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterSetTime %d", nEffect, value);
     break;
   case audioMasterTempoAt :
-    TRACE1("callback: %d audioMasterTempoAt\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterTempoAt %d", nEffect, value);
     break;
   case audioMasterGetNumAutomatableParameters :
-    TRACE1("callback: %d audioMasterGetNumAutomatableParameters\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetNumAutomatableParameters", nEffect);
     break;
   case audioMasterGetParameterQuantization :
-    TRACE1("callback: %d audioMasterGetParameterQuantization\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetParameterQuantization", nEffect);
     break;
   case audioMasterIOChanged :
-    TRACE1("callback: %d audioMasterIOChanged\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterIOChanged", nEffect);
     break;
   case audioMasterNeedIdle :
-    TRACE1("callback: %d audioMasterNeedIdle\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterNeedIdle", nEffect);
     break;
   case audioMasterSizeWindow :
-    TRACE1("callback: %d audioMasterSizeWindow\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterSizeWindow %d,%d", nEffect, index, value);
     break;
   case audioMasterGetSampleRate :
-    TRACE1("callback: %d audioMasterGetSampleRate\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetSampleRate", nEffect);
     break;
   case audioMasterGetBlockSize :
-    TRACE1("callback: %d audioMasterGetBlockSize\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetBlockSize", nEffect);
     break;
   case audioMasterGetInputLatency :
-    TRACE1("callback: %d audioMasterGetInputLatency\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetInputLatency", nEffect);
     break;
   case audioMasterGetOutputLatency :
-    TRACE1("callback: %d audioMasterGetOutputLatency\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetOutputLatency", nEffect);
     break;
   case audioMasterGetPreviousPlug :
-    TRACE1("callback: %d audioMasterGetPreviousPlug\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetPreviousPlug", nEffect);
     break;
   case audioMasterGetNextPlug :
-    TRACE1("callback: %d audioMasterGetNextPlug\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetNextPlug", nEffect);
     break;
   case audioMasterWillReplaceOrAccumulate :
-    TRACE1("callback: %d audioMasterWillReplaceOrAccumulate\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterWillReplaceOrAccumulate", nEffect);
     break;
   case audioMasterGetCurrentProcessLevel :
-    TRACE1("callback: %d audioMasterGetCurrentProcessLevel\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetCurrentProcessLevel", nEffect);
     break;
   case audioMasterGetAutomationState :
-    TRACE1("callback: %d audioMasterGetAutomationState\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetAutomationState", nEffect);
     break;
   case audioMasterOfflineStart :
-    TRACE1("callback: %d audioMasterOfflineStart\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterOfflineStart %d,%d", nEffect, value, index);
     break;
   case audioMasterOfflineRead :
-    TRACE1("callback: %d audioMasterOfflineRead\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterOfflineRead %d,%d", nEffect, value, index);
     break;
   case audioMasterOfflineWrite :
-    TRACE1("callback: %d audioMasterOfflineWrite\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterOfflineWrite %d", nEffect, value);
     break;
   case audioMasterOfflineGetCurrentPass :
-    TRACE1("callback: %d audioMasterOfflineGetCurrentPass\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterOfflineGetCurrentPass", nEffect);
     break;
   case audioMasterOfflineGetCurrentMetaPass :
-    TRACE1("callback: %d audioMasterOfflineGetCurrentMetaPass\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterOfflineGetCurrentMetaPass", nEffect);
     break;
   case audioMasterSetOutputSampleRate :
-    TRACE1("callback: %d audioMasterSetOutputSampleRate\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterSetOutputSampleRate %f", nEffect, opt);
     break;
+#ifdef VST_2_4_EXTENSIONS
+  case audioMasterGetOutputSpeakerArrangement :
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetOutputSpeakerArrangement", nEffect);
+    break;
+#else
   case audioMasterGetSpeakerArrangement :
-    TRACE1("callback: %d audioMasterGetSpeakerArrangement\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetSpeakerArrangement", nEffect);
     break;
+#endif
   case audioMasterGetVendorString :
-    TRACE1("callback: %d audioMasterGetVendorString\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetVendorString", nEffect);
     break;
   case audioMasterGetProductString :
-    TRACE1("callback: %d audioMasterGetProductString\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetProductString", nEffect);
     break;
   case audioMasterGetVendorVersion :
-    TRACE1("callback: %d audioMasterGetVendorVersion\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetVendorVersion", nEffect);
     break;
   case audioMasterVendorSpecific :
-    TRACE1("callback: %d audioMasterVendorSpecific\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterVendorSpecific %d,%d,%d,%08lX,%f", nEffect, opcode, index, value, ptr, opt);
     break;
   case audioMasterSetIcon :
-    TRACE1("callback: %d audioMasterSetIcon\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterSetIcon", nEffect);
     break;
   case audioMasterCanDo :
-    TRACE1("callback: %d audioMasterCanDo\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterCanDo \"%s\"", nEffect, ptr);
     break;
   case audioMasterGetLanguage :
-    TRACE1("callback: %d audioMasterGetLanguage\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetLanguage", nEffect);
     break;
   case audioMasterOpenWindow :
-    TRACE1("callback: %d audioMasterOpenWindow\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterOpenWindow", nEffect);
     break;
   case audioMasterCloseWindow :
-    TRACE1("callback: %d audioMasterCloseWindow\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterCloseWindow", nEffect);
     break;
   case audioMasterGetDirectory :
-    TRACE1("callback: %d audioMasterGetDirectory\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetDirectory", nEffect);
     break;
   case audioMasterUpdateDisplay :
-    TRACE1("callback: %d audioMasterUpdateDisplay\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterUpdateDisplay", nEffect);
     break;
     //---from here VST 2.1 extension opcodes------------------------------------------------------
 #ifdef VST_2_1_EXTENSIONS
   case audioMasterBeginEdit :
-    TRACE1("callback: %d audioMasterBeginEdit\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterBeginEdit Parameter %d", nEffect, index);
     break;
   case audioMasterEndEdit :
-    TRACE1("callback: %d audioMasterEndEdit\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterEndEdit Parameter %d", nEffect, index);
     break;
   case audioMasterOpenFileSelector :
-    TRACE1("callback: %d audioMasterOpenFileSelector\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterOpenFileSelector", nEffect);
     break;
 #endif
     //---from here VST 2.2 extension opcodes------------------------------------------------------
 #ifdef VST_2_2_EXTENSIONS
   case audioMasterCloseFileSelector :
-    TRACE1("callback: %d audioMasterCloseFileSelector\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterCloseFileSelector", nEffect);
     break;
   case audioMasterEditFile :
-    TRACE1("callback: %d audioMasterEditFile\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterEditFile \"%s\"", nEffect, ptr);
     break;
   case audioMasterGetChunkFile :
-    TRACE1("callback: %d audioMasterGetChunkFile\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetChunkFile", nEffect);
     break;
 #endif
     //---from here VST 2.3 extension opcodes------------------------------------------------------
 #ifdef VST_2_1_EXTENSIONS
   case audioMasterGetInputSpeakerArrangement :
-    TRACE1("callback: %d audioMasterGetInputSpeakerArrangement\n", nEffect);
+    nLen = sprintf(szDebug, "callback: %d audioMasterGetInputSpeakerArrangement", nEffect);
     break;
 #endif
   }
 #endif
 
-return CVSTHost::OnAudioMasterCallback(nEffect, opcode, index, value, ptr, opt);
+long lRC = CVSTHost::OnAudioMasterCallback(nEffect, opcode, index, value, ptr, opt);
+
+#if defined(_DEBUG) || defined(_DEBUGFILE)
+switch (opcode)
+  {
+  case audioMasterGetChunkFile :
+    nLen += sprintf(szDebug + nLen, " \"%s\"", ptr);
+    break;
+  }
+sprintf(szDebug + nLen, " RC=%d", lRC);
+TRACE1("%s\n", szDebug);
+#endif
+
+return lRC;
 }
 
 /*****************************************************************************/
@@ -361,6 +382,8 @@ if (pEvData)                            /* if that worked,                   */
     if (dwDelta > (DWORD)nLength)
       dwDelta = nLength - 1;
     pEv->deltaFrames = dwDelta;
+                                        /* ALL VSTHost events are realtime   */
+    pEv->flags = kVstMidiEventIsRealtime;
     }
   nm >>= 1;
   nSysBase = nHdrLen + (sizeof(VstMidiEvent) * nm);
@@ -506,6 +529,9 @@ float *pEmpty = pApp->GetEmptyBuffer();
 
 // NO optimizations in here, as well as NO checks for overruns etc...
 
+if (nLength > lBlockSize)               /* prevent buffer overflow!          */
+  nLength = lBlockSize;
+
 vstTimeInfo.nanoSeconds = (double)timeGetTime() * 1000000.0L;
 CalcTimeInfo();
 
@@ -607,6 +633,8 @@ else                                    /* otherwise                         */
   }
 
 vstTimeInfo.samplePos += (float)nLength;
+                                        /* in any case, reset "changed" flag */
+vstTimeInfo.flags &= ~kVstTransportChanged;
 }
 
 /*****************************************************************************/
@@ -617,6 +645,8 @@ bool CSmpVSTHost::OnCanDo(const char *ptr)
 {
 if ((!strcmp(ptr, "openFileSelector")) ||
     (!strcmp(ptr, "closeFileSelector")) ||
+//  (!strcmp(ptr, "supportShell")) ||   /* old-style Waves plugin shell      */
+    (!strcmp(ptr, "shellCategory")) ||
     (!strcmp(ptr, "supplyIdle")) )
   return true;
 
@@ -752,6 +782,20 @@ if (pEffect && pEffect->GetChunkFile().GetLength())
 return false;
 }
 
+/*****************************************************************************/
+/* OnIdle : idle processing                                                  */
+/*****************************************************************************/
+
+long CSmpVSTHost::OnIdle
+    (
+    int nEffect                         /* effect ID that triggered this     */
+    )
+{
+GetApp()->OnEffIdle(nEffect);
+return 0;
+}
+
+
 /*===========================================================================*/
 /* CSmpEffect class members                                                  */
 /*===========================================================================*/
@@ -801,8 +845,9 @@ if (outBufs)
   {
   // these are managed by the effect object, so we 
   // have to delete them here
-  for (i = 0; i < nAllocatedOutbufs; i++)
-    if (outBufs[i])
+  for (i = nAllocatedOutbufs - 1; i >= 0; i--)
+    if ((outBufs[i]) &&
+        ((!i) || (outBufs[i] != outBufs[0])))
       delete[] outBufs[i];
   delete[] outBufs;
   }
@@ -834,7 +879,12 @@ if (pEffect->numInputs)                 /* allocate input pointers           */
 
 if (pEffect->numOutputs)                /* allocate output pointers          */
   {
-  outBufs = new float *[pEffect->numOutputs];
+  int nAlloc;
+  if (pEffect->numOutputs < 2)
+    nAlloc = 2;
+  else
+    nAlloc = pEffect->numOutputs;
+  outBufs = new float *[nAlloc];
   if (!outBufs)
     return false;
                                         /* and the buffers pointed to        */
@@ -851,7 +901,9 @@ if (pEffect->numOutputs)                /* allocate output pointers          */
     for (j = 0; j < 24000; j++)
       outBufs[i][j] = 0.f;
     }
-  nAllocatedOutbufs = pEffect->numOutputs;
+  for (; i < nAlloc; i++)               /* if less than 2, fill up           */
+    outBufs[i] = outBufs[0];            /* by replicating buffer 0 pointer   */
+  nAllocatedOutbufs = nAlloc;
   }
 return true;
 }
@@ -972,243 +1024,245 @@ return EXCEPTION_CONTINUE_SEARCH;       /* go to next handler                */
 long CSmpEffect::EffDispatch(long opCode, long index, long value, void *ptr, float opt)
 {
 #if defined(_DEBUG) || defined(_DEBUGFILE)
+char szDebug[1024];
+int nLen;
 switch (opCode)
   {
   case effOpen :
-    TRACE0("effDispatch: effOpen\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effOpen", nIndex);
     break;
   case effClose :
-    TRACE0("effDispatch: effClose\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effClose", nIndex);
     break;
   case effSetProgram :
-    TRACE0("effDispatch: effSetProgram\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetProgram %d", nIndex, value);
     break;
   case effGetProgram :
-    TRACE0("effDispatch: effGetProgram\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetProgram", nIndex);
     break;
   case effSetProgramName :
-    TRACE0("effDispatch: effSetProgramName\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetProgramName \"%s\"", nIndex, ptr);
     break;
   case effGetProgramName :
-    TRACE0("effDispatch: effGetProgramName\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetProgramName", nIndex);
     break;
   case effGetParamLabel :
-    TRACE0("effDispatch: effGetParamLabel\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetParamLabel %d", nIndex, index);
     break;
   case effGetParamDisplay :
-    TRACE0("effDispatch: effGetParamDisplay\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetParamDisplay %d", nIndex, index);
     break;
   case effGetParamName :
-    TRACE0("effDispatch: effGetParamName\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetParamName %d", nIndex, index);
     break;
   case effGetVu :
-    TRACE0("effDispatch: effGetVu\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetVu", nIndex);
     break;
   case effSetSampleRate :
-    TRACE0("effDispatch: effSetSampleRate\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetSampleRate %f", nIndex, opt);
     break;
   case effSetBlockSize :
-    TRACE0("effDispatch: effSetBlockSize\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetBlockSize %d", nIndex, value);
     break;
   case effMainsChanged :
-    TRACE0("effDispatch: effMainsChanged\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effMainsChanged %d", nIndex, value);
     break;
   case effEditGetRect :
-    TRACE0("effDispatch: effEditGetRect\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditGetRect", nIndex);
     break;
   case effEditOpen :
-    TRACE0("effDispatch: effEditOpen\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditOpen", nIndex);
     break;
   case effEditClose :
-    TRACE0("effDispatch: effEditClose\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditClose", nIndex);
     break;
   case effEditDraw :
-    TRACE0("effDispatch: effEditDraw\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditDraw", nIndex);
     break;
   case effEditMouse :
-    TRACE0("effDispatch: effEditMouse\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditMouse", nIndex);
     break;
   case effEditKey :
-    TRACE0("effDispatch: effEditKey\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditKey", nIndex);
     break;
   case effEditIdle :
-    TRACE0("effDispatch: effEditIdle\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditIdle", nIndex);
     break;
   case effEditTop :
-    TRACE0("effDispatch: effEditTop\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditTop", nIndex);
     break;
   case effEditSleep :
-    TRACE0("effDispatch: effEditSleep\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditSleep", nIndex);
     break;
   case effIdentify :
-    TRACE0("effDispatch: effIdentify\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effIdentify", nIndex);
     break;
   case effGetChunk :
-    TRACE0("effDispatch: effGetChunk\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetChunk %d", nIndex, index);
     break;
   case effSetChunk :
-    TRACE0("effDispatch: effSetChunk\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetChunk %d,%d", nIndex, index, value);
     break;
   case effProcessEvents :
-    TRACE0("effDispatch: effProcessEvents\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effProcessEvents %d", nIndex, ((VstEvents *)ptr)->numEvents);
     break;
   case effCanBeAutomated :
-    TRACE0("effDispatch: effCanBeAutomated\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effCanBeAutomated %d", nIndex, index);
     break;
   case effString2Parameter :
-    TRACE0("effDispatch: effString2Parameter\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effString2Parameter %d \"%s\"", nIndex, index, ptr ? ptr : "(null)");
     break;
   case effGetNumProgramCategories :
-    TRACE0("effDispatch: effGetNumProgramCategories\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetNumProgramCategories", nIndex);
     break;
   case effGetProgramNameIndexed :
-    TRACE0("effDispatch: effGetProgramNameIndexed\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetProgramNameIndexed %d,%d", nIndex, index, value);
     break;
   case effCopyProgram :
-    TRACE0("effDispatch: effCopyProgram\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effCopyProgram %d", nIndex, index);
     break;
   case effConnectInput :
-    TRACE0("effDispatch: effConnectInput\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effConnectInput %d,%d", nIndex, index, value);
     break;
   case effConnectOutput :
-    TRACE0("effDispatch: effConnectOutput\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effConnectOutput %d,%d", nIndex, index, value);
     break;
   case effGetInputProperties :
-    TRACE0("effDispatch: effGetInputProperties\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetInputProperties %d", nIndex, index);
     break;
   case effGetOutputProperties :
-    TRACE0("effDispatch: effGetOutputProperties\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetOutputProperties %d", nIndex, index);
     break;
   case effGetPlugCategory :
-    TRACE0("effDispatch: effGetPlugCategory\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetPlugCategory", nIndex);
     break;
   case effGetCurrentPosition :
-    TRACE0("effDispatch: effGetCurrentPosition\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetCurrentPosition", nIndex);
     break;
   case effGetDestinationBuffer :
-    TRACE0("effDispatch: effGetDestinationBuffer\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetDestinationBuffer", nIndex);
     break;
   case effOfflineNotify :
-    TRACE0("effDispatch: effOfflineNotify\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effOfflineNotify %d,%d", nIndex, value, index);
     break;
   case effOfflinePrepare :
-    TRACE0("effDispatch: effOfflinePrepare\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effOfflinePrepare %d", nIndex, value);
     break;
   case effOfflineRun :
-    TRACE0("effDispatch: effOfflineRun\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effOfflineRun %d", nIndex, value);
     break;
   case effProcessVarIo :
-    TRACE0("effDispatch: effProcessVarIo\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effProcessVarIo", nIndex);
     break;
   case effSetSpeakerArrangement :
-    TRACE0("effDispatch: effSetSpeakerArrangement\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetSpeakerArrangement", nIndex);
     break;
   case effSetBlockSizeAndSampleRate :
-    TRACE0("effDispatch: effSetBlockSizeAndSampleRate\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetBlockSizeAndSampleRate %d,%f", nIndex, value, opt);
     break;
   case effSetBypass :
-    TRACE0("effDispatch: effSetBypass\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetBypass %d", nIndex, value);
     break;
   case effGetEffectName :
-    TRACE0("effDispatch: effGetEffectName\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetEffectName", nIndex);
     break;
   case effGetErrorText :
-    TRACE0("effDispatch: effGetErrorText\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetErrorText", nIndex);
     break;
   case effGetVendorString :
-    TRACE0("effDispatch: effGetVendorString\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetVendorString", nIndex);
     break;
   case effGetProductString :
-    TRACE0("effDispatch: effGetProductString\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetProductString", nIndex);
     break;
   case effGetVendorVersion :
-    TRACE0("effDispatch: effGetVendorVersion\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetVendorVersion", nIndex);
     break;
   case effVendorSpecific :
-    TRACE0("effDispatch: effVendorSpecific\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effVendorSpecific %d,%d,%08lX,%f", nIndex, index, value, ptr, opt);
     break;
   case effCanDo :
-    TRACE0("effDispatch: effCanDo\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effCanDo \"%s\"", nIndex, ptr);
     break;
   case effGetTailSize :
-    TRACE0("effDispatch: effGetTailSize\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetTailSize", nIndex);
     break;
   case effIdle :
-    TRACE0("effDispatch: effIdle\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effIdle", nIndex);
     break;
   case effGetIcon :
-    TRACE0("effDispatch: effGetIcon\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetIcon", nIndex);
     break;
   case effSetViewPosition :
-    TRACE0("effDispatch: effSetViewPosition\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetViewPosition %d,%d", nIndex, index, value);
     break;
   case effGetParameterProperties :
-    TRACE0("effDispatch: effGetParameterProperties\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetParameterProperties %d", nIndex);
     break;
   case effKeysRequired :
-    TRACE0("effDispatch: effKeysRequired\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effKeysRequired", nIndex);
     break;
   case effGetVstVersion :
-    TRACE0("effDispatch: effGetVstVersion\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetVstVersion", nIndex);
     break;
-#if defined(VST_2_1_EXTENSIONS
+#if defined(VST_2_1_EXTENSIONS)
     //---from here VST 2.1 extension opcodes---------------------------------------------------------
   case effEditKeyDown :
-    TRACE0("effDispatch: effEditKeyDown\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditKeyDown '%c',%d,%d", nIndex, index, value, (unsigned char)opt);
     break;
   case effEditKeyUp :
-    TRACE0("effDispatch: effEditKeyUp\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEditKeyUp '%c',%d,%d", nIndex, index, value, (unsigned char)opt);
     break;
   case effSetEditKnobMode :
-    TRACE0("effDispatch: effSetEditKnobMode\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetEditKnobMode %d", nIndex, value);
     break;
   case effGetMidiProgramName :
-    TRACE0("effDispatch: effGetMidiProgramName\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetMidiProgramName %d", nIndex, index);
     break;
   case effGetCurrentMidiProgram :
-    TRACE0("effDispatch: effGetCurrentMidiProgram\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetCurrentMidiProgram %d", nIndex, index);
     break;
   case effGetMidiProgramCategory :
-    TRACE0("effDispatch: effGetMidiProgramCategory\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetMidiProgramCategory %d", nIndex, index);
     break;
   case effHasMidiProgramsChanged :
-    TRACE0("effDispatch: effHasMidiProgramsChanged\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effHasMidiProgramsChanged %d", nIndex, index);
     break;
   case effGetMidiKeyName :
-    TRACE0("effDispatch: effGetMidiKeyName\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetMidiKeyName %d", nIndex, index);
     break;
   case effBeginSetProgram :
-    TRACE0("effDispatch: effBeginSetProgram\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effBeginSetProgram", nIndex);
     break;
   case effEndSetProgram :
-    TRACE0("effDispatch: effEndSetProgram\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effEndSetProgram", nIndex);
     break;
 #endif
 #if defined(VST_2_3_EXTENSIONS)
     //---from here VST 2.3 extension opcodes---------------------------------------------------------
   case effGetSpeakerArrangement :
-    TRACE0("effDispatch: effGetSpeakerArrangement\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effGetSpeakerArrangement", nIndex);
     break;
   case effShellGetNextPlugin :
-    TRACE0("effDispatch: effShellGetNextPlugin\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effShellGetNextPlugin", nIndex);
     break;
   case effStartProcess :
-    TRACE0("effDispatch: effStartProcess\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effStartProcess", nIndex);
     break;
   case effStopProcess :
-    TRACE0("effDispatch: effStopProcess\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effStopProcess", nIndex);
     break;
   case effSetTotalSampleToProcess :
-    TRACE0("effDispatch: effSetTotalSampleToProcess\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetTotalSampleToProcess %d", nIndex, value);
     break;
   case effSetPanLaw :
-    TRACE0("effDispatch: effSetPanLaw\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effSetPanLaw %d,%f", nIndex, value, opt);
     break;
   case effBeginLoadBank :
-    TRACE0("effDispatch: effBeginLoadBank\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effBeginLoadBank", nIndex);
     break;
   case effBeginLoadProgram :
-    TRACE0("effDispatch: effBeginLoadProgram\n");
+    nLen = sprintf(szDebug, "effDispatch: %d effBeginLoadProgram", nIndex);
     break;
 #endif
   }
@@ -1223,6 +1277,27 @@ long lRC = 0;
   {
        // no code here; isn't executed
   }
+
+#if defined(_DEBUG) || defined(_DEBUGFILE)
+switch (opCode)
+  {
+  case effGetProgramName:
+  case effGetParamLabel :
+  case effGetParamDisplay :
+  case effGetParamName :
+  case effGetProgramNameIndexed :
+  case effGetEffectName :
+  case effGetErrorText :
+  case effGetVendorString :
+  case effGetProductString :
+  case effShellGetNextPlugin :
+    nLen += sprintf(szDebug + nLen, " \"%s\"", ptr);
+    break;
+  }
+
+sprintf(szDebug + nLen, " RC=%d", lRC);
+TRACE1("%s\n", szDebug);
+#endif
 
 return lRC;
 }

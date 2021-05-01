@@ -12,6 +12,8 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+#pragma intrinsic(memcpy,memset)
+
 /*===========================================================================*/
 /* CSpecAsioHost class members                                               */
 /*===========================================================================*/
@@ -84,18 +86,16 @@ else
 bool CSpecAsioHost::LoadDriver(char *sDriver, int &nBufSz)
 {
 if (!CAsioHost::LoadDriver(sDriver, nBufSz))
-#if defined(_DEBUG) || defined(_DEBUGFILE)
   {
   TRACE2("CAsioHost::LoadDriver(%s) failed: \"%s\"\n",
          sDriver, driverInfo.errorMessage);
   return false;
   }
+#if defined(_DEBUG) || defined(_DEBUGFILE)
 TRACE("CAsioHost::LoadDriver(%s) loaded: \"%s\" V%d Asio%d\n",
       sDriver,
       driverInfo.name, driverInfo.driverVersion,
       driverInfo.asioVersion);
-#else
-  return false;
 #endif
 return AllocBuffers(nBufSz);
 }
@@ -241,9 +241,8 @@ int i;
 float *pBuf = new float[usedSize];
 if (!pBuf)
   return;
-
-for (i = 0; i < usedSize; i++)          /* clear the buffer                  */
-  pBuf[i] = .0f;
+                                        /* clear the buffer                  */
+memset(pBuf, 0, usedSize * sizeof(float));
                                         /* then put them into ASIO buffers   */
 for (i = inputBuffers; i < inputBuffers + outputBuffers; i++)
   {

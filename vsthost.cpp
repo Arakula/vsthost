@@ -14,6 +14,7 @@
 #include "wavedev.h"
 #include "WorkThread.h"
 #include "SpecDSound.h"
+#include "ShellSelDlg.h"
 #include "midikeybdlg.h"
 
 #ifdef __ASIO_H
@@ -186,6 +187,10 @@ Enable3dControlsStatic();	// Call this when linking to MFC statically
 // Change the registry key under which our settings are stored.
 SetRegistryKey(_T("Seib"));
 
+CMyCommandLineInfo cmdInfo;
+ParseCommandLine(cmdInfo);
+bNoSave = cmdInfo.bNoSave;
+
 #if 0                                   /* change for dynamic profiles!      */
 // dynamic profile based on application name
 char szAppName[_MAX_PATH];
@@ -194,13 +199,14 @@ char *absl = strrchr(szAppName, '\\');
 char *extn = strrchr(szAppName, '.');
 if (extn > absl)
   *extn = '\0';
-free((void *)m_pszProfileName);
+free((void *)m_pszProfileName);         /* generate profile section          */
 m_pszProfileName = strdup(absl ? absl + 1 : szAppName);
-#endif
+free((void *)m_pszAppName);             /* and application name              */
+m_pszAppName = strdup(m_pszProfileName);
 
-CMyCommandLineInfo cmdInfo;
-ParseCommandLine(cmdInfo);
-bNoSave = cmdInfo.bNoSave;
+// from now on, Get/SetProfile can be used
+
+#endif
 
 #ifdef __ASIO_H
 pAsioHost = new CSpecAsioHost;
@@ -307,14 +313,14 @@ for (int i = 0; i < 2; i++)             /* delete empty buffers              */
     delete[] emptyBuf[i];
 
 #ifdef __ASIO_H
-if (pAsioHost)
+if (pAsioHost)                          /* remove ASIO Host                  */
   delete pAsioHost;
 #endif
 
-if (pWorkThread)
+if (pWorkThread)                        /* remove work thread                */
   delete pWorkThread;
 
-if (m_hMDIMenu != NULL)
+if (m_hMDIMenu != NULL)                 /* free resources                    */
   FreeResource(m_hMDIMenu);
 if (m_hMDIAccel != NULL)
   FreeResource(m_hMDIAccel);
@@ -420,7 +426,7 @@ if ((pEffect) &&
 /* LoadEffect : loads a new effect                                           */
 /*****************************************************************************/
 
-BOOL CVsthostApp::LoadEffect(LPCSTR lpszFileName, int *pnEffect)
+BOOL CVsthostApp::LoadEffect(LPCSTR lpszFileName, int *pnEffect, int nUniqueId)
 {
 BOOL bWasRunning = bEngRunning;         /* get current engine state          */
 
@@ -428,7 +434,37 @@ EngineStop();                           /* stop engine                       */
 
 if (pnEffect)                           /* initialize effect ID if necessary */
   *pnEffect = -1;
-int nEffect = vstHost.LoadPlugin(lpszFileName);
+int nEffect = vstHost.LoadPlugin(lpszFileName, nUniqueId);
+
+if (nEffect >= 0)                       /* look whether shell category       */
+  {
+  CSmpEffect *pEffect = (CSmpEffect *)vstHost.GetAt(nEffect);
+                                        /* if that's a shell plugin          */
+  if ((pEffect->EffGetPlugCategory() == kPlugCategShell) &&
+      (!nUniqueId))                     /* and not yet specified             */
+    {                                   /* enumerate the contained effects   */
+    CStringArray saNames;
+    CDWordArray dwaIDs;
+    char szName[_MAX_PATH];
+    unsigned long ulID;
+    while ((ulID = pEffect->EffGetNextShellPlugin(szName)))
+      {
+      if (saNames.Add(szName) < 0)
+        break;
+      if (dwaIDs.Add(ulID) < 0)
+        {
+        saNames.RemoveAt(saNames.GetUpperBound());
+        break;
+        }
+      }
+    vstHost.RemoveAt(nEffect);          /* delete shell effect               */
+    nEffect = -1;
+    CShellSelDlg dlg;                   /* get plugin ID to use              */
+    dlg.saNames.Append(saNames);
+    if (dlg.DoModal() == IDOK)          /* and eventually re-load for that   */
+      nEffect = vstHost.LoadPlugin(lpszFileName, dwaIDs[dlg.nSelID]);
+    }
+  }
 
 if (bWasRunning)                        /* if it was running before,         */
   EngineStart();                        /* restart engine                    */
@@ -441,6 +477,8 @@ if (nEffect >= 0)
   if (pChild)
     {
     pChild->SetEffect(nEffect);
+    ERect *pRect = NULL;
+    vstHost.GetAt(nEffect)->EffEditGetRect(&pRect);
     if (pnEffect)
       *pnEffect = nEffect;
     return TRUE;
@@ -697,7 +735,10 @@ switch (nDevType)
       pAsioHost->UnloadDriver();
 #endif
     bRC = DSoundOut.Open(sDevice,
-                         DSBCAPS_CTRLDEFAULT |
+//                       DSBCAPS_CTRLDEFAULT |
+                         DSBCAPS_CTRLFREQUENCY |
+                             DSBCAPS_CTRLPAN |
+                             DSBCAPS_CTRLVOLUME |
                              DSBCAPS_CTRLPOSITIONNOTIFY |
                              DSBCAPS_GETCURRENTPOSITION2 |
                              DSBCAPS_GLOBALFOCUS,
@@ -1220,9 +1261,12 @@ int nLoaded = GetProfileInt("Load", "NumLoaded", 0);
 
 for (i = 0; i < nLoaded; i++)           /* first, load all effects           */
   {
+  int nUniqueId;
+  sName.Format("FX%d_ID", i);
+  nUniqueId = GetProfileInt("Load", sName, 0);
   sName.Format("FX%d_File", i);
   sName = GetProfileString("Load", sName);
-  if (LoadEffect(sName, &nEffect))
+  if (LoadEffect(sName, &nEffect, nUniqueId))
     {
     pEff = (CSmpEffect *)vstHost.GetAt(nEffect);
     if (pEff)
@@ -1290,6 +1334,11 @@ for (i = j = 0; i < nLoaded; i++)       /* save all loaded effects' names    */
     {
     sName.Format("FX%d_File", j);
     WriteProfileString("Load", sName, pEff->sName);
+    if (pEff->nUniqueId)
+      {
+      sName.Format("FX%d_ID", j);
+      WriteProfileInt("Load", sName, pEff->nUniqueId);
+      }
     sName.Format("FX%d_Channels", j);
     WriteProfileInt("Load", sName, pEff->GetChnMask());
     sName.Format("FX%d_Bank", j);
@@ -1374,4 +1423,24 @@ if (pMidiKeyb)
 void CVsthostApp::OnUpdateMidikeybProperties(CCmdUI* pCmdUI) 
 {
 pCmdUI->Enable(!!pMidiKeyb);            /* show whether it's there           */
+}
+
+/*****************************************************************************/
+/* OnEffIdle : called when an effect sends audioMasterIdle                   */
+/*****************************************************************************/
+
+void CVsthostApp::OnEffIdle(int nEffect)
+{
+MSG msg;
+
+while ((::PeekMessage(&msg, NULL, WM_TIMER, WM_TIMER, PM_REMOVE)) ||
+       (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_REMOVE)) ||
+       (::PeekMessage(&msg, NULL, WM_NCPAINT, WM_NCPAINT, PM_REMOVE)))
+  {
+  if (!PreTranslateMessage(&msg))
+	{
+    ::TranslateMessage(&msg);
+	::DispatchMessage(&msg);
+	}
+  }
 }

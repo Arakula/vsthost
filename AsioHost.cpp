@@ -22,8 +22,10 @@ float x2 = fabsf(input - fMax);
 return fGrdDiv * (x1 - x2);
 }
 
-//-----------------------------------------------------------------------------
-// conversion from 64 bit ASIOSample/ASIOTimeStamp to double float
+/*****************************************************************************/
+/* ASIO64toDouble: convert 64 bit ASIOSample/ASIOTimeStamp to double float   */
+/*****************************************************************************/
+
 #if NATIVE_INT64
   #define ASIO64toDouble(a)  (a)
 #else
@@ -130,6 +132,7 @@ if (!asioDrivers)                       /* we are the one and only           */
   asioDrivers = this;                   /* asioDrivers pointer!              */
 bLoaded = false;                        /* no driver loaded yet              */
 bAllocated = false;                     /* no buffers allocated yet          */
+memset(&driverInfo, 0, sizeof(driverInfo));
 }
 
 /*****************************************************************************/
@@ -155,22 +158,65 @@ if (pHost && (pHost != this))           /* if another CAsioHost is running   */
 if (bLoaded)                            /* make sure to kill off an old one  */
   UnloadDriver();
 
-bLoaded = loadDriver(sDriver);          /* try to load the driver            */
-if (!bLoaded)                           /* upon error                        */
-  return false;                         /* return at once                    */
-// the driver can be referenced as theAsioDriver->... from now on
-pHost = this;
 try
   {
+  bLoaded = loadDriver(sDriver);        /* try to load the driver            */
+  if (!bLoaded)                         /* upon error                        */
+    {
+    TRACE1("CAsioHost::LoadDriver(\"%s\"): loadDriver() failed\n", sDriver);
+    throw 1;                            /* return at once                    */
+    }
+  // the driver can be referenced as theAsioDriver->... from now on
+  pHost = this;
   if (!Init())
-    throw 1;
-  if (!GetChannels(&inputChannels, &outputChannels))
+    {
+    TRACE1("CAsioHost::LoadDriver(\"%s\"): Init() failed\n", sDriver);
     throw 2;
-  if (!GetBufferSize(&minSize, &maxSize, &preferredSize, &granularity))
+    }
+  if (!GetChannels(&inputChannels, &outputChannels))
+    {
+    TRACE1("CAsioHost::LoadDriver(\"%s\"): GetChannels() failed\n", sDriver);
     throw 3;
+    }
+  if (!GetBufferSize(&minSize, &maxSize, &preferredSize, &granularity))
+    {
+    TRACE1("CAsioHost::LoadDriver(\"%s\"): GetBufferSize() failed\n", sDriver);
+    throw 4;
+    }
+#if (defined(_DEBUG) || defined(_DEBUGFILE))
+  TRACE("CAsioHost::LoadDriver(\"%s\"): trying %d, minSize=%d maxSize=%d preferredSize=%d granularity=%d\n", sDriver, nBufSz, minSize, maxSize, preferredSize, granularity);
+#endif
 #if 1
 // variant 1 - confine host-defined buffer size to driver range
-  if (nBufSz < minSize)
+                                        /* assure it's in granularity range  */
+  if (granularity == -1)                /* power of 2?                       */
+    {
+    int nBit = -1, nMask = 0;
+    int nTestBit;
+    for (int i = 18; i >= 0; i--)       /* find highest bit in buffer size   */
+      {
+      nTestBit = 1 << i;
+      if ((nBit == -1) && (nBufSz & nTestBit))
+        nBit = nTestBit;
+      else if (nBit >= 0)
+        nMask |= nTestBit;
+      }
+    if (nBit < 0)                       /* buffer size 0???                  */
+      nBufSz = 4;                       /* c'mon. Be serious, mate.          */
+    else
+      {
+      nBufSz += (nBit - 1);             /* make sure to use next HIGHER value*/
+      nBufSz &= ~nMask;                 /* then kill                         */
+      }
+    }
+  else if (granularity == 0)            /* if FIXED to preferred size,       */
+    nBufSz = preferredSize;             /* use that                          */
+  else if (granularity > 1)             /* if a granularity is to be forced, */
+    {
+    nBufSz += granularity - 1;          /* make sure to use this granularity */
+    nBufSz -= (nBufSz % granularity);
+    }
+if (nBufSz < minSize)
     nBufSz = minSize;
   else if (nBufSz > maxSize)
     nBufSz = maxSize;
@@ -180,8 +226,12 @@ try
   nBufSz = preferredSize;
 #endif
   usedSize = nBufSz;
+  TRACE2("CAsioHost::LoadDriver(\"%s\"): using buffer size %d\n", sDriver, usedSize);
   if (!GetSampleRate(&sampleRate))
+    {
+    TRACE1("CAsioHost::LoadDriver(\"%s\"): GetSampleRate() failed\n", sDriver);
     throw 5;
+    }
   if (sampleRate <= 0.0 || sampleRate > 96000.0)
     {
     // Driver does not store it's internal sample rate,
@@ -189,13 +239,22 @@ try
     // Usually you should check beforehand, that the selected
     // sample rate is valid with ASIOCanSampleRate().
     if (!SetSampleRate(44100.0))
+      {
+      TRACE1("CAsioHost::LoadDriver(\"%s\"): SetSampleRate(default 44100) failed\n", sDriver);
       throw 6;
+      }
     if (!GetSampleRate(&sampleRate))
+      {
+      TRACE1("CAsioHost::LoadDriver(\"%s\"): GetSampleRate(after default 44100) failed\n", sDriver);
       throw 7;
+      }
     }
   postOutput = OutputReady();           /* check whether driver wants Ready  */
   if (!CreateBuffers(nBufSz))           /* let driver create buffers         */
+    {
+    TRACE2("CAsioHost::LoadDriver(\"%s\"): CreateBuffers(%d) failed\n", sDriver, nBufSz);
     throw 8;
+    }
   }
 catch (...)                             /* upon any error                    */
   {
