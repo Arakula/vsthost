@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="vsthost" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -8,12 +8,12 @@ CFG=vsthost - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "vsthost.mak".
+!MESSAGE NMAKE /f "vsthost23.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "vsthost.mak" CFG="vsthost - Win32 Debug"
+!MESSAGE NMAKE /f "vsthost23.mak" CFG="vsthost - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -441,7 +441,7 @@ SOURCE=..\asiosdk2\host\ginclude.h
 SOURCE=..\asiosdk2\common\iasiodrv.h
 # End Source File
 # End Group
-# Begin Group "VSTSDK Files"
+# Begin Group "VSTSDK 2.3 Files"
 
 # PROP Default_Filter ""
 # Begin Source File
@@ -469,6 +469,10 @@ SOURCE=..\vstsdk2.3\source\common\audioeffectx.h
 SOURCE=..\vstsdk2.3\source\common\vstfxstore.h
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\license.txt
+# End Source File
 # Begin Source File
 
 SOURCE=.\ReadMe.txt

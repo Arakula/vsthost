@@ -8,12 +8,12 @@ CFG=vsthost - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "vsthost.mak".
+!MESSAGE NMAKE /f "vsthost24.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "vsthost.mak" CFG="vsthost - Win32 Debug"
+!MESSAGE NMAKE /f "vsthost24.mak" CFG="vsthost - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -39,12 +39,12 @@ RSC=rc.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 6
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release"
-# PROP Intermediate_Dir "Release"
+# PROP Output_Dir "Release24"
+# PROP Intermediate_Dir "Release24"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\vstsdk2.4.2" /I "..\vstsdk2.4.2\public.sdk\source\vst2.x" /I "..\asiosdk2\common" /I "..\asiosdk2\host" /I "..\asiosdk2\host\pc" /D "NDEBUG" /D "USE_ASIO" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D VST_FORCE_DEPRECATED=0 /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\vstsdk2.4" /I "..\vstsdk2.4\public.sdk\source\vst2.x" /I "..\asiosdk2\common" /I "..\asiosdk2\host" /I "..\asiosdk2\host\pc" /D "NDEBUG" /D "USE_ASIO" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D VST_FORCE_DEPRECATED=0 /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0xc07 /d "NDEBUG" /d "_AFXDLL"
@@ -65,12 +65,12 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 6
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
-# PROP Intermediate_Dir "Debug"
+# PROP Output_Dir "Debug24"
+# PROP Intermediate_Dir "Debug24"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\vstsdk2.4.2" /I "..\vstsdk2.4.2\public.sdk\source\vst2.x" /I "..\asiosdk2\common" /I "..\asiosdk2\host" /I "..\asiosdk2\host\pc" /D "_DEBUG" /D "USE_ASIO" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D VST_FORCE_DEPRECATED=0 /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\vstsdk2.4" /I "..\vstsdk2.4\public.sdk\source\vst2.x" /I "..\asiosdk2\common" /I "..\asiosdk2\host" /I "..\asiosdk2\host\pc" /D "_DEBUG" /D "USE_ASIO" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D VST_FORCE_DEPRECATED=0 /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0xc07 /d "_DEBUG" /d "_AFXDLL"
@@ -92,12 +92,12 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 6
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "TRelease"
-# PROP Intermediate_Dir "TRelease"
+# PROP Output_Dir "TRelease24"
+# PROP Intermediate_Dir "TRelease24"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /I "..\vstsdk2.3\source\common" /I "..\asiosdk2\common" /I "..\asiosdk2\host" /I "..\asiosdk2\host\pc" /D "NDEBUG" /D "USE_ASIO" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\vstsdk2.4.2" /I "..\vstsdk2.4.2\public.sdk\source\vst2.x" /I "..\asiosdk2\common" /I "..\asiosdk2\host" /I "..\asiosdk2\host\pc" /D "NDEBUG" /D "_DEBUGFILE" /D "USE_ASIO" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D VST_FORCE_DEPRECATED=0 /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\vstsdk2.4" /I "..\vstsdk2.4\public.sdk\source\vst2.x" /I "..\asiosdk2\common" /I "..\asiosdk2\host" /I "..\asiosdk2\host\pc" /D "NDEBUG" /D "_DEBUGFILE" /D "USE_ASIO" /D "WIN32" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D VST_FORCE_DEPRECATED=0 /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0xc07 /d "NDEBUG" /d "_AFXDLL"
@@ -441,32 +441,32 @@ SOURCE=..\asiosdk2\host\ginclude.h
 SOURCE=..\asiosdk2\common\iasiodrv.h
 # End Source File
 # End Group
-# Begin Group "VSTSDK 2.4 rev2 Files"
+# Begin Group "VSTSDK 2.4 Files"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\vstsdk2.4.2\pluginterfaces\vst2.x\aeffect.h
+SOURCE=..\vstsdk2.4\pluginterfaces\vst2.x\aeffect.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\vstsdk2.4.2\pluginterfaces\vst2.x\aeffectx.h
+SOURCE=..\vstsdk2.4\pluginterfaces\vst2.x\aeffectx.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\vstsdk2.4.2\public.sdk\source\vst2.x\aeffeditor.h
+SOURCE=..\vstsdk2.4\public.sdk\source\vst2.x\aeffeditor.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\vstsdk2.4.2\public.sdk\source\vst2.x\audioeffect.h
+SOURCE=..\vstsdk2.4\public.sdk\source\vst2.x\audioeffect.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\vstsdk2.4.2\public.sdk\source\vst2.x\audioeffectx.h
+SOURCE=..\vstsdk2.4\public.sdk\source\vst2.x\audioeffectx.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\vstsdk2.4.2\pluginterfaces\vst2.x\vstfxstore.h
+SOURCE=..\vstsdk2.4\pluginterfaces\vst2.x\vstfxstore.h
 # End Source File
 # End Group
 # Begin Source File

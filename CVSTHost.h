@@ -1,15 +1,25 @@
 /*****************************************************************************/
 /* CVSTHost.h: interface for the CVSTHost class.                             */
 /*****************************************************************************/
-/*                                                                           */
-/* $Archive::                                                              $ */
-/* $Revision::                                                             $ */
-/* $Date::                                                                 $ */
-/* $Author::                                                               $ */
-/* $Modtime::                                                              $ */
-/* $Workfile::                                                             $ */
-/*                                                                           */
-/*****************************************************************************/
+
+/******************************************************************************
+Copyright (C) 2006  Hermann Seib
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+******************************************************************************/
+
 
 #if !defined(VSTHOST_H__INCLUDED_)
 #define VSTHOST_H__INCLUDED_
@@ -29,11 +39,90 @@ struct MidiProgramName;
 struct MidiProgramCategory;
 struct MidiKeyName;
 #endif
+
 #if defined(VST_2_4_EXTENSIONS)
                                         /* VSTGUI 3.0 needed for this!       */
 #include "pluginterfaces/vst2.x/vstfxstore.h"
+
+#ifdef chunkGlobalMagic                 /* VST SDK 2.4 rev1?                 */
+// in VST SDK 2.4 rev.1, there were 2 structures for the bank file: fxSet and
+// fxChunkSet. In rev2, Steinberg found it fitting to replace this with a unified
+// structure <sigh>... anyway, since this is a more logical way to look at it, 
+// I adapted my structures to this.
+//-------------------------------------------------------------------------------------------------------
+/** Bank (fxb) structure. */
+//-------------------------------------------------------------------------------------------------------
+struct fxBank
+{
+//-------------------------------------------------------------------------------------------------------
+	VstInt32 chunkMagic;		///< 'CcnK'
+	VstInt32 byteSize;			///< size of this chunk, excl. magic + byteSize
+
+	VstInt32 fxMagic;			///< 'FxBk' (regular) or 'FBCh' (opaque chunk)
+	VstInt32 version;			///< format version (1 or 2)
+	VstInt32 fxID;				///< fx unique ID
+	VstInt32 fxVersion;			///< fx version
+
+	VstInt32 numPrograms;		///< number of programs
+
+#if VST_2_4_EXTENSIONS
+	VstInt32 currentProgram;	///< version 2: current program number
+	char future[124];			///< reserved, should be zero
+#else
+	char future[128];			///< reserved, should be zero
+#endif
+
+	union
+	{
+		fxProgram programs[1];	///< variable number of programs
+		struct
+		{
+			VstInt32 size;		///< size of bank data
+			char chunk[1];		///< variable sized array with opaque bank data
+		} data;					///< bank chunk data
+	} content;					///< bank content depending on fxMagic
+//-------------------------------------------------------------------------------------------------------
+};
+
+#endif
+
 #elif defined(VST_2_2_EXTENSIONS)
 #include "vstfxstore.h"                 /* VSTGUI 2.2 needed for this!       */
+//-------------------------------------------------------------------------------------------------------
+/** Bank (fxb) structure. */
+//-------------------------------------------------------------------------------------------------------
+struct fxBank
+{
+//-------------------------------------------------------------------------------------------------------
+    long chunkMagic;            ///< 'CcnK'
+    long byteSize;              ///< size of this chunk, excl. magic + byteSize
+
+    long fxMagic;               ///< 'FxBk' (regular) or 'FBCh' (opaque chunk)
+    long version;               ///< format version (1 or 2)
+    long fxID;                  ///< fx unique ID
+    long fxVersion;             ///< fx version
+
+    long numPrograms;           ///< number of programs
+
+#if VST_2_4_EXTENSIONS
+    long currentProgram;        ///< version 2: current program number
+    char future[124];           ///< reserved, should be zero
+#else
+    char future[128];           ///< reserved, should be zero
+#endif
+
+    union
+    {
+        fxProgram programs[1];  ///< variable number of programs
+        struct
+        {
+            long size;          ///< size of bank data
+            char chunk[1];      ///< variable sized array with opaque bank data
+        } data;                 ///< bank chunk data
+    } content;                  ///< bank content depending on fxMagic
+//-------------------------------------------------------------------------------------------------------
+};
+
 #else                                   /* if it's not there, use basics     */
 /*****************************************************************************/
 /* this is a copy of vstfxstore.h!                                           */
@@ -62,40 +151,41 @@ struct fxProgram
 	float params[1];		// variable no. of parameters	
 };
 
-//--------------------------------------------------------------------
-struct fxSet
+//-------------------------------------------------------------------------------------------------------
+/** Bank (fxb) structure. */
+//-------------------------------------------------------------------------------------------------------
+struct fxBank
 {
-	long chunkMagic;		// 'CcnK'
-	long byteSize;			// of this chunk, excl. magic + byteSize
+//-------------------------------------------------------------------------------------------------------
+    long chunkMagic;            ///< 'CcnK'
+    long byteSize;              ///< size of this chunk, excl. magic + byteSize
 
-	long fxMagic;			// 'FxBk'
-	long version;
-	long fxID;				// fx unique id
-	long fxVersion;
+    long fxMagic;               ///< 'FxBk' (regular) or 'FBCh' (opaque chunk)
+    long version;               ///< format version (1 or 2)
+    long fxID;                  ///< fx unique ID
+    long fxVersion;             ///< fx version
 
-	long numPrograms;
-	char future[128];
+    long numPrograms;           ///< number of programs
 
-	fxProgram programs[1];	// variable no. of programs
+#if VST_2_4_EXTENSIONS
+    long currentProgram;        ///< version 2: current program number
+    char future[124];           ///< reserved, should be zero
+#else
+    char future[128];           ///< reserved, should be zero
+#endif
+
+    union
+    {
+        fxProgram programs[1];  ///< variable number of programs
+        struct
+        {
+            long size;          ///< size of bank data
+            char chunk[1];      ///< variable sized array with opaque bank data
+        } data;                 ///< bank chunk data
+    } content;                  ///< bank content depending on fxMagic
+//-------------------------------------------------------------------------------------------------------
 };
 
-//--------------------------------------------------------------------
-struct fxChunkSet
-{
-	long chunkMagic;		// 'CcnK'
-	long byteSize;			// of this chunk, excl. magic + byteSize
-
-	long fxMagic;			// 'FxCh', 'FPCh', or 'FBCh'
-	long version;
-	long fxID;				// fx unique id
-	long fxVersion;
-
-	long numPrograms;
-	char future[128];
-
-	long chunkSize;
-	char chunk[8];			// variable
-};
 #endif
 #if !defined(VST_2_3_EXTENSIONS)
 struct VstSpeakerArrangement;
@@ -214,16 +304,16 @@ public:
 
     // access functions
 public:
-    long GetVersion() { if (!bBank) return 0; return ((fxSet*)bBank)->version; }
-    long GetFxID() { if (!bBank) return 0; return ((fxSet*)bBank)->fxID; }
-    void SetFxID(long id) { if (bBank) ((fxSet*)bBank)->fxID = id; if (!bChunk) for (int i = GetNumPrograms() -1; i >= 0; i--) GetProgram(i)->fxID = id; }
-    long GetFxVersion() { if (!bBank) return 0; return ((fxSet*)bBank)->fxVersion; }
-    void SetFxVersion(long v) { if (bBank) ((fxSet*)bBank)->fxVersion = v; if (!bChunk) for (int i = GetNumPrograms() -1; i >= 0; i--) GetProgram(i)->fxVersion = v; }
-    long GetNumPrograms() { if (!bBank) return 0; return ((fxSet*)bBank)->numPrograms; }
+    long GetVersion() { if (!bBank) return 0; return ((fxBank*)bBank)->version; }
+    long GetFxID() { if (!bBank) return 0; return ((fxBank*)bBank)->fxID; }
+    void SetFxID(long id) { if (bBank) ((fxBank*)bBank)->fxID = id; if (!bChunk) for (int i = GetNumPrograms() -1; i >= 0; i--) GetProgram(i)->fxID = id; }
+    long GetFxVersion() { if (!bBank) return 0; return ((fxBank*)bBank)->fxVersion; }
+    void SetFxVersion(long v) { if (bBank) ((fxBank*)bBank)->fxVersion = v; if (!bChunk) for (int i = GetNumPrograms() -1; i >= 0; i--) GetProgram(i)->fxVersion = v; }
+    long GetNumPrograms() { if (!bBank) return 0; return ((fxBank*)bBank)->numPrograms; }
     long GetNumParams() { if (bChunk) return 0; return GetProgram(0)->numParams; }
-    long GetChunkSize() { if (!bChunk) return 0; return ((fxChunkSet *)bBank)->chunkSize; }
-    void *GetChunk() { if (!bChunk) return 0; return ((fxChunkSet *)bBank)->chunk; }
-    bool SetChunk(void *chunk) { if (!bChunk) return false; memcpy(((fxChunkSet *)bBank)->chunk, chunk, ((fxChunkSet *)bBank)->chunkSize); return true; }
+    long GetChunkSize() { if (!bChunk) return 0; return ((fxBank *)bBank)->content.data.size; }
+    void *GetChunk() { if (!bChunk) return 0; return ((fxBank *)bBank)->content.data.chunk; }
+    bool SetChunk(void *chunk) { if (!bChunk) return false; memcpy(((fxBank *)bBank)->content.data.chunk, chunk, ((fxBank *)bBank)->content.data.size); return true; }
 
 	fxProgram * GetProgram(int nProgNum);
 
@@ -247,7 +337,11 @@ public:
       fxProgram *p = GetProgram(nProgram);
       if (!p || nParm > p->numParams)
         return 0;
+#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
+      return p->content.params[nParm];
+#else
       return p->params[nParm];
+#endif
       }
     bool SetProgParm(int nProgram, int nParm, float val = 0.0)
       {
@@ -258,7 +352,11 @@ public:
         val = 0.0;
       if (val > 1.0)
         val = 1.0;
+#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
+      p->content.params[nParm] = val;
+#else
       p->params[nParm] = val;
+#endif
       return true;
       }
 
@@ -349,7 +447,7 @@ public:
     virtual void EffResume() { EffDispatch(effMainsChanged, 0, true); }
     virtual float EffGetVu() { return (float)EffDispatch(effGetVu) / (float)32767.; }
     virtual long EffEditGetRect(ERect **ptr) { return EffDispatch(effEditGetRect, 0, 0, ptr); }
-    virtual long EffEditOpen(void *ptr) { long l = EffDispatch(effEditOpen, 0, 0, ptr); if (l > 0) bEditOpen = true; return l; }
+    virtual long EffEditOpen(void *ptr) { long l = EffDispatch(effEditOpen, 0, 0, ptr); /* if (l > 0) */ bEditOpen = true; return l; }
     virtual void EffEditClose() { EffDispatch(effEditClose); bEditOpen = false; }
     virtual void EffEditIdle() { if (bEditOpen) EffDispatch(effEditIdle); }
 #if MAC

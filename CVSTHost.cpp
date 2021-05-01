@@ -2,6 +2,24 @@
 /* CVSTHost.cpp: implementation of the CVSTHost class.                       */
 /*****************************************************************************/
 
+/******************************************************************************
+Copyright (C) 2006  Hermann Seib
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+******************************************************************************/
+
 #ifdef WIN32
 
 #include <windows.h>                    /* Windows header files              */
@@ -136,7 +154,7 @@ return *this;
 
 bool CFxBank::SetSize(int nPrograms, int nParams)
 {
-int nTotLen = sizeof(fxSet) - sizeof(fxProgram);
+int nTotLen = sizeof(fxBank) - sizeof(fxProgram);
 int nProgLen = sizeof(fxProgram) + (nParams - 1) * sizeof(float);
 nTotLen += nPrograms * nProgLen;
 unsigned char *nBank = new unsigned char[nTotLen];
@@ -149,14 +167,14 @@ nBankLen = nTotLen;
 bChunk = false;
 
 memset(nBank, 0, nTotLen);              /* initialize new bank               */
-fxSet *pSet = (fxSet *)bBank;
-pSet->chunkMagic = cMagic;
-pSet->byteSize = 0;
-pSet->fxMagic = bankMagic;
-pSet->version = MyVersion;
-pSet->numPrograms = nPrograms;
+fxBank *pBank = (fxBank *)bBank;
+pBank->chunkMagic = cMagic;
+pBank->byteSize = 0;
+pBank->fxMagic = bankMagic;
+pBank->version = MyVersion;
+pBank->numPrograms = nPrograms;
 
-unsigned char *bProg = (unsigned char *)pSet->programs;
+unsigned char *bProg = (unsigned char *)pBank->content.programs;
 for (int i = 0; i < nPrograms; i++)
   {
   fxProgram * pProg = (fxProgram *)(bProg + i * nProgLen);
@@ -166,14 +184,18 @@ for (int i = 0; i < nPrograms; i++)
   pProg->version = 1;
   pProg->numParams = nParams;
   for (int j = 0; j < nParams; j++)
+#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
+    pProg->content.params[j] = 0.0;
+#else
     pProg->params[j] = 0.0;
+#endif
   }
 return true;
 }
 
 bool CFxBank::SetSize(int nChunkSize)
 {
-int nTotLen = sizeof(fxChunkSet) + nChunkSize - 8;
+int nTotLen = ((int)((fxBank *)0)->content.data.chunk) + nChunkSize;
 unsigned char *nBank = new unsigned char[nTotLen];
 if (!nBank)
   return false;
@@ -184,13 +206,13 @@ nBankLen = nTotLen;
 bChunk = true;
 
 memset(nBank, 0, nTotLen);              /* initialize new bank               */
-fxChunkSet *pSet = (fxChunkSet *)bBank;
-pSet->chunkMagic = cMagic;
-pSet->byteSize = 0;
-pSet->fxMagic = chunkBankMagic;
-pSet->version = MyVersion;
-pSet->numPrograms = 1;
-pSet->chunkSize = nChunkSize;
+fxBank *pBank = (fxBank *)bBank;
+pBank->chunkMagic = cMagic;
+pBank->byteSize = 0;
+pBank->fxMagic = chunkBankMagic;
+pBank->version = MyVersion;
+pBank->numPrograms = 1;
+pBank->content.data.size = nChunkSize;
 
 return true;
 }
@@ -218,28 +240,29 @@ try
                                         /* read chunk set to determine cnt.  */
   if (fread(nBank, 1, tLen, fp) != tLen)
     throw (int)1;
-  fxSet *pSet = (fxSet *)nBank;         /* position on set                   */
+  fxBank *pBank = (fxBank *)nBank;      /* position on bank                  */
   if (NeedsBSwap)                       /* eventually swap necessary bytes   */
     {
-    SwapBytes(pSet->chunkMagic);
-    SwapBytes(pSet->byteSize);
-    SwapBytes(pSet->fxMagic);
-    SwapBytes(pSet->version);
-    SwapBytes(pSet->fxID);
-    SwapBytes(pSet->fxVersion);
-    SwapBytes(pSet->numPrograms);
+    SwapBytes(pBank->chunkMagic);
+    SwapBytes(pBank->byteSize);
+    SwapBytes(pBank->fxMagic);
+    SwapBytes(pBank->version);
+    SwapBytes(pBank->fxID);
+    SwapBytes(pBank->fxVersion);
+    SwapBytes(pBank->numPrograms);
     }
-  if ((pSet->chunkMagic != cMagic) ||   /* if erroneous data in there        */
-      (pSet->version > MyVersion) ||
-      ((pSet->fxMagic != bankMagic) &&
-       (pSet->fxMagic != chunkBankMagic)))
+  if ((pBank->chunkMagic != cMagic) ||  /* if erroneous data in there        */
+      (pBank->version > MyVersion) ||
+      ((pBank->fxMagic != bankMagic) &&
+       (pBank->fxMagic != chunkBankMagic)))
     throw (int)1;                       /* get out                           */
 
-  if (pSet->fxMagic == bankMagic)
+  if (pBank->fxMagic == bankMagic)      /* if this is a bank of parameters   */
     {
-    fxProgram * pProg = pSet->programs; /* position on 1st program           */
+                                        /* position on 1st program          */
+    fxProgram * pProg = pBank->content.programs;
     int nProg = 0;
-    while (nProg < pSet->numPrograms)   /* walk program list                 */
+    while (nProg < pBank->numPrograms)  /* walk program list                 */
       {
       if (NeedsBSwap)                   /* eventually swap necessary bytes   */
         {
@@ -259,7 +282,11 @@ try
         {                               /* swap all parameter bytes          */
         int j;
         for (j = 0; j < pProg->numParams; j++)
+#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
+          SwapBytes(pProg->content.params[j]);
+#else
           SwapBytes(pProg->params[j]);
+#endif
         }
       unsigned char *pNext = (unsigned char *)(pProg + 1);
       pNext += (sizeof(float) * (pProg->numParams - 1));
@@ -271,14 +298,13 @@ try
       }
     }
                                         /* if it's a chunk file              */
-  else if (pSet->fxMagic == chunkBankMagic)
+  else if (pBank->fxMagic == chunkBankMagic)
     {
-    fxChunkSet * pCSet = (fxChunkSet *)nBank;
     if (NeedsBSwap)                     /* eventually swap necessary bytes   */
       {
-      SwapBytes(pCSet->chunkSize);
+      SwapBytes(pBank->content.data.size);
                                         /* size check - must not be too large*/
-      if (pCSet->chunkSize + sizeof(*pCSet) - 8 > tLen)
+      if (pBank->content.data.size + ((size_t)((fxBank *)0)->content.data.chunk) > tLen)
         throw (int)1;
       }
     }
@@ -286,7 +312,7 @@ try
   Unload();                             /* otherwise remove eventual old data*/
   bBank = nBank;                        /* and put in new data               */
   nBankLen = (int)tLen;
-  bChunk = (pSet->fxMagic == chunkBankMagic);
+  bChunk = (pBank->fxMagic == chunkBankMagic);
   }
 catch(...)
   {
@@ -313,27 +339,27 @@ if (!nBank)                             /* if impossible                     */
   return false;
 memcpy(nBank, bBank, nBankLen);
 
-fxSet *pSet = (fxSet *)nBank;           /* position on set                   */
-int numPrograms = pSet->numPrograms;
+fxBank *pBank = (fxBank *)nBank;        /* position on bank                  */
+int numPrograms = pBank->numPrograms;
 if (NeedsBSwap)                         /* if byte-swapping needed           */
   {
-  SwapBytes(pSet->chunkMagic);
-  SwapBytes(pSet->byteSize);
-  SwapBytes(pSet->fxMagic);
-  SwapBytes(pSet->version);
-  SwapBytes(pSet->fxID);
-  SwapBytes(pSet->fxVersion);
-  SwapBytes(pSet->numPrograms);
+  SwapBytes(pBank->chunkMagic);
+  SwapBytes(pBank->byteSize);
+  SwapBytes(pBank->fxMagic);
+  SwapBytes(pBank->version);
+  SwapBytes(pBank->fxID);
+  SwapBytes(pBank->fxVersion);
+  SwapBytes(pBank->numPrograms);
   }
 if (bChunk)
   {
-  fxChunkSet *pCSet = (fxChunkSet *)nBank;
   if (NeedsBSwap)                       /* if byte-swapping needed           */
-    SwapBytes(pCSet->chunkSize);
+    SwapBytes(pBank->content.data.size);
   }
 else
   {
-  fxProgram * pProg = pSet->programs;   /* position on 1st program           */
+                                        /* position on 1st program           */
+  fxProgram * pProg = pBank->content.programs;
   int numParams = pProg->numParams;
   int nProg = 0;
   while (nProg < numPrograms)           /* walk program list                 */
@@ -348,7 +374,11 @@ else
       SwapBytes(pProg->fxVersion);
       SwapBytes(pProg->numParams);
       for (int j = 0; j < numParams; j++)
+#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
+        SwapBytes(pProg->content.params[j]);
+#else
         SwapBytes(pProg->params[j]);
+#endif
       }
     unsigned char *pNext = (unsigned char *)(pProg + 1);
     pNext += (sizeof(float) * (numParams - 1));
@@ -404,29 +434,11 @@ fxProgram * CFxBank::GetProgram(int nProgNum)
 if ((!IsLoaded()) || (bChunk))          /* if nothing loaded or chunk file   */
   return NULL;                          /* return OUCH                       */
 
-fxSet *pSet = (fxSet *)bBank;           /* position on set                   */
-fxProgram * pProg = pSet->programs;     /* position on 1st program           */
-#if 1
+fxBank *pBank = (fxBank *)bBank;        /* position on 1st program           */
+fxProgram * pProg = pBank->content.programs;
 int nProgLen = sizeof(fxProgram) + (pProg->numParams - 1) * sizeof(float);
 unsigned char *pThatProg = ((unsigned char *)pProg) + (nProgNum * nProgLen);
 pProg = (fxProgram *)pThatProg;
-#else
-/*---------------------------------------------------------------------------*/
-/* presumably, the following logic is overkill; if all programs have the     */
-/* same number of parameters, a simple multiplication would do.              */
-/* But that's not stated anywhere in the VST SDK...                          */
-/*---------------------------------------------------------------------------*/
-int i;
-for (i = 0; i < nProgNum; i++)
-  {
-  unsigned char *pNext = (unsigned char *)(pProg + 1);
-  pNext += (sizeof(float) * (pProg->numParams - 1));
-  if (pNext > bBank + nBankLen)         /* VERY simple fuse                  */
-    return NULL;
-
-  pProg = (fxProgram *)pNext;
-  }
-#endif
 return pProg;
 }
 
