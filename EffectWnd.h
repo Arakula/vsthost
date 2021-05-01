@@ -44,6 +44,7 @@ public:
 
 // Implementation
 public:
+	void CloseEditWnd();
 	virtual void Update();
     virtual bool OnSetParameterAutomated(long index, float value) { return false; }
 	void SetEffSize(int cx, int cy);
@@ -83,6 +84,7 @@ protected:
 	afx_msg void OnProgramPrev();
 	afx_msg void OnUpdateProgramNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateProgramPrev(CCmdUI* pCmdUI);
+	afx_msg void OnDestroy();
 	//}}AFX_MSG
     afx_msg void OnSetProgram(UINT nID);
 	DECLARE_MESSAGE_MAP()

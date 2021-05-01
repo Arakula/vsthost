@@ -441,19 +441,19 @@ int j;                                  /* loop counters                     */
 
 pEff->EnterCritical();                  /* make sure we don't get killed now */
 
-if ((pEffEvData) &&                     /* if there are events               */
-    (pEff->bWantMidi))                  /* and the effect wants them         */
-                                        /* process them                      */
+if (pEff->bWantMidi)                    /* if effect wants MIDI events       */
   {
+  static VstEvents noEvData = {0};      /* necessary for Reaktor ...         */
   try
     {
-    pEff->EffProcessEvents((VstEvents *)pEffEvData);
+    pEff->EffProcessEvents((pEffEvData) ? (VstEvents *)pEffEvData : &noEvData);
     }
   catch(...)
     {
     TRACE0("Serious error in pEff->EffProcessEvents()!\n");
     }
   }
+
 for (j = 0; j < nChannels; j++)
   pEff->SetInputBuffer(j, pBuffer[j]);
 
@@ -949,8 +949,7 @@ if (pEditWnd)
 
 bool CSmpEffect::OnUpdateDisplay()
 {
-if (pEditWnd)
-  pEditWnd->Update();
+pFrameWnd->PostMessage(WM_COMMAND, IDM_DISPLAY_UPDATE);
 return CEffect::OnUpdateDisplay();
 }
 

@@ -56,6 +56,7 @@ protected:
 	void LoadSetup();
 	BOOL LoadWaveOutDevice(CString sDevice, int &nBufSz);
 	BOOL LoadWaveInDevice(CString sDevice, int nBufSz = 4410);
+    bool SetAsioChannels(LPCSTR lpszChnIn = "", LPCSTR lpszChnOut = "");
 	DWORD dwStartStamp;
 	BOOL bEngRunning;
 	void SetupLatency();
@@ -80,6 +81,10 @@ public:
 	afx_msg void OnUpdateAsioCpl(CCmdUI* pCmdUI);
 	afx_msg void OnMidikeyb();
 	afx_msg void OnUpdateMidikeyb(CCmdUI* pCmdUI);
+	afx_msg void OnMidikeybProperties();
+	afx_msg void OnUpdateMidikeybProperties(CCmdUI* pCmdUI);
+	afx_msg void OnAsioChn();
+	afx_msg void OnUpdateAsioChn(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

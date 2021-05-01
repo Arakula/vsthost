@@ -94,6 +94,7 @@ protected:
 	afx_msg void OnProgramPrev();
 	afx_msg void OnUpdateProgramNext(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateProgramPrev(CCmdUI* pCmdUI);
+    afx_msg void OnDisplayUpdate();
 	//}}AFX_MSG
     afx_msg void OnSetProgram(UINT nID);
 	DECLARE_MESSAGE_MAP()

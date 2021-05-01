@@ -29,6 +29,10 @@ public:
     void OnProcessed();
     void OnProcessed(float **pBuffers);
 
+    bool GetActiveChannel(int nIndex) { return bActiveChannel[nIndex]; }
+    void SetActiveChannel(int nIndex, bool bActive = true) { bActiveChannel[nIndex] = bActive; }
+	void ClearBuffers();
+
 // specializations
 public:
     virtual void *GetSysRef() { return AfxGetMainWnd()->m_hWnd; }
@@ -55,9 +59,13 @@ protected:
     float *pBuffers[2];
     float *pOBuffers[2];
     long curIndex;
+    bool bActiveChannel[kMaxInputChannels + kMaxOutputChannels];
+
 
 protected:
     bool AllocBuffers(long nBufSz = 4410);
+	void ConvertFromASIO(int nIndex, void *source, float *target, long frames);
+	void ConvertToASIO(int nIndex, float *source, void *target, long frames);
 };
 
 #endif // !defined(AFX_SPECASIOHOST_H__69E15A61_1C21_11D8_81AA_4000001054B2__INCLUDED_)

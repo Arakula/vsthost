@@ -106,10 +106,27 @@ struct VstPatchChunkInfo;
 #endif // _MSC_VER > 1000
 
 /*****************************************************************************/
-/* CFxBank : class for an Fx Bank                                            */
+/* CFxBase : base class for FX Bank / Program Files                          */
 /*****************************************************************************/
 
-class CFxBank
+class CFxBase
+{
+public:
+
+protected:
+	static bool NeedsBSwap;
+
+protected:
+	static void SwapBytes(float &f);
+	static void SwapBytes(long &l);
+
+};
+
+/*****************************************************************************/
+/* CFxBank : class for an Fx Bank file                                       */
+/*****************************************************************************/
+
+class CFxBank : public CFxBase
 {
 public:
     CFxBank(char *pszFile = 0);
@@ -182,13 +199,19 @@ protected:
 	unsigned char * bBank;
 	int nBankLen;
 	bool bChunk;
-	bool NeedsBSwap;
 
 protected:
     void Init();
 	CFxBank & DoCopy(CFxBank const &org);
-	static void SwapBytes(float &f);
-	static void SwapBytes(long &l);
+};
+
+/*****************************************************************************/
+/* CFxProgram : class for an Fx Program file                                 */
+/*****************************************************************************/
+
+// not really designed yet...
+class CFxProgram : public CFxBase
+{
 };
 
 /*****************************************************************************/

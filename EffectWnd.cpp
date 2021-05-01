@@ -83,9 +83,27 @@ BEGIN_MESSAGE_MAP(CEffectWnd, CMDIChildWnd)
 	ON_COMMAND(IDM_PROGRAM_PREV, OnProgramPrev)
 	ON_UPDATE_COMMAND_UI(IDM_PROGRAM_NEXT, OnUpdateProgramNext)
 	ON_UPDATE_COMMAND_UI(IDM_PROGRAM_PREV, OnUpdateProgramPrev)
+	ON_WM_DESTROY()
 	//}}AFX_MSG_MAP
     ON_COMMAND_RANGE(IDM_EFF_PROGRAM_0, IDM_EFF_PROGRAM_0+999, OnSetProgram)
 END_MESSAGE_MAP()
+
+/*****************************************************************************/
+/* CloseEditWnd : closes the Edit window, if necessary                       */
+/*****************************************************************************/
+
+void CEffectWnd::CloseEditWnd()
+{
+CSmpEffect *pEffect = (CSmpEffect *)pHost->GetAt(nEffect);
+                                        /* if edit window still open         */
+if ((pEffect) && (pEffect->GetEditWnd()))
+  {
+  pEffect->EnterCritical();             /* make sure we're not processing    */
+  pEffect->EffEditClose();              /* tell effect edit window's closed  */
+  pMain->EditClosed();                  /* tell main window it's gone        */
+  pEffect->LeaveCritical();             /* re-enable processing              */
+  }
+}
 
 /*****************************************************************************/
 /* OnClose : called when the editor window is closed                         */
@@ -93,12 +111,18 @@ END_MESSAGE_MAP()
 
 void CEffectWnd::OnClose() 
 {
-CSmpEffect *pEffect = (CSmpEffect *)pHost->GetAt(nEffect);
-pEffect->EnterCritical();               /* make sure we're not processing    */
-pEffect->EffEditClose();                /* tell effect edit window's closed  */
-pMain->EditClosed();                    /* tell main window it's gone        */
-pEffect->LeaveCritical();               /* re-enable processing              */
-CWnd::OnClose();
+CloseEditWnd();                         /* close edit window                 */
+CMDIChildWnd::OnClose();                /* and allow base class to work      */
+}
+
+/*****************************************************************************/
+/* OnDestroy : called when the window is destroyed                           */
+/*****************************************************************************/
+
+void CEffectWnd::OnDestroy() 
+{
+CloseEditWnd();                         /* close edit window                 */
+CMDIChildWnd::OnDestroy();              /* and allow base class to work      */
 }
 
 /*****************************************************************************/
@@ -309,7 +333,6 @@ if (cy > cymax)
 if (bReset)
   SetWindowPos(&wndTop, 0, 0, cx, cy,
                SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOZORDER);
-	
 }
 
 /*****************************************************************************/

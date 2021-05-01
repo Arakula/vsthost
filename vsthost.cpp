@@ -18,6 +18,7 @@
 
 #ifdef __ASIO_H
 #include "SpecAsioHost.h"
+#include "AsioChannelSelectDialog.h"
 #endif
 
 #ifdef _DEBUG
@@ -129,6 +130,10 @@ BEGIN_MESSAGE_MAP(CVsthostApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(IDM_ASIO_CPL, OnUpdateAsioCpl)
 	ON_COMMAND(IDM_MIDIKEYB, OnMidikeyb)
 	ON_UPDATE_COMMAND_UI(IDM_MIDIKEYB, OnUpdateMidikeyb)
+	ON_COMMAND(IDM_MIDIKEYB_PROPERTIES, OnMidikeybProperties)
+	ON_UPDATE_COMMAND_UI(IDM_MIDIKEYB_PROPERTIES, OnUpdateMidikeybProperties)
+	ON_COMMAND(IDM_ASIO_CHN, OnAsioChn)
+	ON_UPDATE_COMMAND_UI(IDM_ASIO_CHN, OnUpdateAsioChn)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -244,11 +249,17 @@ pWorkThread = new CWorkThread(&vstHost);
 int nBufSz = GetProfileInt("Settings", "WaveOutBufSize", 4410);
                                         /* open outputs device               */
 MidiOut.Open(GetProfileString("Settings", "MidiOut"));
-LoadWaveOutDevice(GetProfileString("Settings", "WaveOut", sWaveMapper), nBufSz);
+LoadWaveOutDevice(GetProfileString("Settings", "WaveOut", sWaveMapper),
+                  nBufSz);
 
 #ifdef __ASIO_H
 if (pAsioHost)                          /* if ASIO host there, pass thread   */
+  {
   pAsioHost->SetWorkThread(pWorkThread);
+  if (pAsioHost->IsLoaded())
+    SetAsioChannels(GetProfileString("Settings", "AsioChnIn"),
+                    GetProfileString("Settings", "AsioChnOut"));
+  }
 #endif
                                         /* open input devices                */
 MidiIn.Open(GetProfileString("Settings", "MidiIn"),
@@ -640,7 +651,11 @@ return bRC;
 /* LoadWaveOutDevice : loads a Wave Out device                               */
 /*****************************************************************************/
 
-BOOL CVsthostApp::LoadWaveOutDevice(CString sDevice, int &nBufSz)
+BOOL CVsthostApp::LoadWaveOutDevice
+    (
+    CString sDevice,
+    int &nBufSz
+    )
 {
 BOOL bRC = FALSE;
 int nDevType = 0;
@@ -694,6 +709,12 @@ switch (nDevType)
 #ifdef __ASIO_H
     if (pAsioHost)
       bRC = pAsioHost->LoadDriver((char *)(LPCSTR)sDevice, nBufSz);
+    if (bRC)                            /* if load went OK,                  */
+      {                                 /* make sure to use the correct      */
+      ASIOSampleRate cRate;             /* sample rate...                    */
+      pAsioHost->GetSampleRate(&cRate);
+      vstHost.SetSampleRate((float)cRate);
+      }
 #endif
     break;
   }
@@ -702,6 +723,78 @@ TRACE2("    -> %sOK, buffer size=%d\n", bRC?"":"NOT ", nBufSz);
 
 vstHost.SetBlockSize(nBufSz);
 return bRC;
+}
+
+/*****************************************************************************/
+/* SetAsioChannels : sets stereo channels                                    */
+/*****************************************************************************/
+
+bool CVsthostApp::SetAsioChannels(LPCSTR lpszChnIn, LPCSTR lpszChnOut)
+{
+#ifdef __ASIO_H
+if ((pAsioHost) && (pAsioHost->IsLoaded()))
+  {
+  CString sIn(lpszChnIn), sOut(lpszChnOut);
+  long i, lIn = 0, lOut = 0, lCur = -1;
+  pAsioHost->GetChannels(&lIn, &lOut);
+  ASIOChannelInfo info = {0};
+  long lCurIn = -1, lCurOut = -1;
+
+  info.isInput = ASIOTrue;
+  for (i = 0; i < lIn; i++)
+    {
+    info.channel = i;
+    pAsioHost->GetChannelInfo(&info);
+    if (lCurIn < 0)                     /* if not started yet                */
+      {
+      if (sIn.IsEmpty())                /* if simply going for default       */
+        pAsioHost->SetActiveChannel(i, true);
+      else if (!sIn.CompareNoCase(info.name))
+        {
+        pAsioHost->SetActiveChannel(i, true);
+        lCurIn++;
+        }
+      else
+        pAsioHost->SetActiveChannel(i, false);
+      }
+    else if (lCurIn >= 1)               /* if already found all              */
+      pAsioHost->SetActiveChannel(i, false);
+    else                                /* if one of the selected channels   */
+      {
+      pAsioHost->SetActiveChannel(i, true);
+      lCurIn++;
+      }
+    }
+
+  info.isInput = ASIOFalse;
+  for (i = 0; i < lOut; i++)
+    {
+    info.channel = i;
+    pAsioHost->GetChannelInfo(&info);
+    if (lCurOut < 0)                    /* if not started yet                */
+      {
+      if (sOut.IsEmpty())               /* if simply going for default       */
+        pAsioHost->SetActiveChannel(lIn + i, true);
+      else if (!sOut.CompareNoCase(info.name))
+        {
+        pAsioHost->SetActiveChannel(lIn + i, true);
+        lCurOut++;
+        }
+      else
+        pAsioHost->SetActiveChannel(lIn + i, false);
+      }
+    else if (lCurOut >= 1)              /* if already found all              */
+      pAsioHost->SetActiveChannel(lIn + i, false);
+    else                                /* if one of the selected channels   */
+      {
+      pAsioHost->SetActiveChannel(lIn + i, true);
+      lCurOut++;
+      }
+    }
+  return true;
+  }
+return false;
+#endif
 }
 
 /*****************************************************************************/
@@ -969,6 +1062,9 @@ if ((pAsioHost) && (pAsioHost->IsLoaded()))
   BOOL bWasRunning = bEngRunning;       /* remember old setting              */
   EngineStop();                         /* stop input engine                 */
   pAsioHost->ControlPanel();
+  ASIOSampleRate cRate;
+  pAsioHost->GetSampleRate(&cRate);
+  vstHost.SetSampleRate((float)cRate);
   if (bWasRunning)                      /* if engine was running before      */
     EngineStart();                      /* restart it                        */
   }
@@ -980,6 +1076,112 @@ if ((pAsioHost) && (pAsioHost->IsLoaded()))
 /*****************************************************************************/
 
 void CVsthostApp::OnUpdateAsioCpl(CCmdUI* pCmdUI) 
+{
+#ifdef __ASIO_H
+pCmdUI->Enable((pAsioHost) && (pAsioHost->IsLoaded()));
+#else
+pCmdUI->Enable(FALSE);
+#endif
+}
+
+/*****************************************************************************/
+/* OnAsioChn : called to select the used ASIO channels (only 2 in VSTHost)   */
+/*****************************************************************************/
+
+void CVsthostApp::OnAsioChn() 
+{
+#ifdef __ASIO_H
+if ((pAsioHost) && (pAsioHost->IsLoaded()))
+  {
+  // NOTE: the following logic is relatively unrefined; it simply ignores
+  // the ASIO concept of channel groups which *might* lead to strange
+  // results if, for example, there's a Group 0 with an odd number of
+  // channels followed by a Group 1...
+
+  CAsioChannelSelectDialog dlg;
+
+  CString sNoChannel;
+  sNoChannel.LoadString(IDS_NOCHANNEL);
+  dlg.saIn.Add(sNoChannel);
+  dlg.saOut.Add(sNoChannel);
+  CString sCurIn, sCurOut, sCur;
+  sCurIn = GetProfileString("Settings", "AsioChnIn");
+  sCurOut = GetProfileString("Settings", "AsioChnOut");
+
+  long i, lIn = 0, lOut = 0, lCurIn = 0, lCurOut = 0;
+  pAsioHost->GetChannels(&lIn, &lOut);
+  ASIOChannelInfo info[2] = {0};
+
+  dlg.nSelIn = 0;
+  info[0].isInput = info[1].isInput = ASIOTrue;
+  for (i = 0; i < lIn - 1; i += 2)
+    {
+    info[0].channel = i;
+    info[1].channel = i + 1;
+    pAsioHost->GetChannelInfo(&info[0]);
+    pAsioHost->GetChannelInfo(&info[1]);
+    if (!sCurIn.CompareNoCase(info[0].name))
+      dlg.nSelIn = dlg.saIn.GetSize();
+    dlg.saIn.Add(CString(info[0].name) +
+                 " + " +
+                 CString(info[1].name));
+    }
+  dlg.nSelOut = 0;
+  info[0].isInput = info[1].isInput = ASIOFalse;
+  for (i = 0; i < lOut - 1; i += 2)
+    {
+    info[0].channel = i;
+    info[1].channel = i + 1;
+    pAsioHost->GetChannelInfo(&info[0]);
+    pAsioHost->GetChannelInfo(&info[1]);
+    if (!sCurOut.CompareNoCase(info[0].name))
+      dlg.nSelOut = dlg.saOut.GetSize();
+    dlg.saOut.Add(CString(info[0].name) +
+                  " + " +
+                  CString(info[1].name));
+    }
+
+  if (dlg.DoModal() == IDOK)
+    {
+    dlg.nSelIn--;
+    if (dlg.nSelIn >= 0)
+      {
+      info[0].isInput = ASIOTrue;
+      info[0].channel = dlg.nSelIn * 2;
+      pAsioHost->GetChannelInfo(&info[0]);
+      WriteProfileString("Settings", "AsioChnIn", info[0].name);
+      }
+    else
+      WriteProfileString("Settings", "AsioChnIn", NULL);
+
+    dlg.nSelOut--;
+    if (dlg.nSelOut >= 0)
+      {
+      info[0].isInput = ASIOFalse;
+      info[0].channel = dlg.nSelOut * 2;
+      pAsioHost->GetChannelInfo(&info[0]);
+      WriteProfileString("Settings", "AsioChnOut", info[0].name);
+      }
+    else
+      WriteProfileString("Settings", "AsioChnOut", NULL);
+
+    BOOL bWasRunning = bEngRunning;     /* remember old setting              */
+    EngineStop();                       /* stop input engine                 */
+    pAsioHost->ClearBuffers();
+    SetAsioChannels(GetProfileString("Settings", "AsioChnIn"),
+                    GetProfileString("Settings", "AsioChnOut"));
+    if (bWasRunning)                    /* if engine was running before      */
+      EngineStart();                    /* restart it                        */
+    }
+  }
+#endif	
+}
+
+/*****************************************************************************/
+/* OnUpdateAsioChn : update the visual appearance                            */
+/*****************************************************************************/
+
+void CVsthostApp::OnUpdateAsioChn(CCmdUI* pCmdUI) 
 {
 #ifdef __ASIO_H
 pCmdUI->Enable((pAsioHost) && (pAsioHost->IsLoaded()));
@@ -1153,4 +1355,23 @@ else                                    /* otherwise create dialog           */
 void CVsthostApp::OnUpdateMidikeyb(CCmdUI* pCmdUI) 
 {
 pCmdUI->SetCheck(!!pMidiKeyb);	        /* show whether it's there           */
+}
+
+/*****************************************************************************/
+/* OnMidikeybProperties : sets the properties of the MIDI keyboard           */
+/*****************************************************************************/
+
+void CVsthostApp::OnMidikeybProperties() 
+{
+if (pMidiKeyb)
+  pMidiKeyb->PostMessage(WM_SYSCOMMAND, IDM_MIDIKEYB_PROPERTIES);
+}
+
+/*****************************************************************************/
+/* OnUpdateMidikeybProperties : updates the visual appearance                */
+/*****************************************************************************/
+
+void CVsthostApp::OnUpdateMidikeybProperties(CCmdUI* pCmdUI) 
+{
+pCmdUI->Enable(!!pMidiKeyb);            /* show whether it's there           */
 }

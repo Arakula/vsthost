@@ -15,11 +15,44 @@
 
 #include "CVSTHost.h"                   /* private prototypes                */
 
+/*****************************************************************************/
+/* Global Data                                                               */
+/*****************************************************************************/
+
+const int MyVersion = 1;                /* highest known VST FX version      */
+
+/*===========================================================================*/
+/* CFxBase class members                                                     */
+/*===========================================================================*/
+
+static char szChnk[] = "CcnK";          /* set up swapping flag              */
+static long lChnk = 'CcnK';
+bool CFxBase::NeedsBSwap = !!memcmp(szChnk, &lChnk, 4);
+
+/*****************************************************************************/
+/* SwapBytes : swaps bytes for big/little-endian difference                  */
+/*****************************************************************************/
+
+void CFxBase::SwapBytes(long &l)
+{
+unsigned char *b = (unsigned char *)&l;
+long intermediate =  ((long)b[0] << 24) |
+                     ((long)b[1] << 16) |
+                     ((long)b[2] << 8) |
+                     (long)b[3];
+l = intermediate;
+}
+
+void CFxBase::SwapBytes(float &f)
+{
+long *pl = (long *)&f;
+SwapBytes(*pl);
+}
+
+
 /*===========================================================================*/
 /* CFxBank class members                                                     */
 /*===========================================================================*/
-
-const int MyVersion = 1;                /* highest known VST FX version      */
 
 /*****************************************************************************/
 /* CFxBank : constructor                                                     */
@@ -50,10 +83,6 @@ SetSize(nChunkSize);                    /* set new size                      */
 
 void CFxBank::Init()
 {
-static char szChnk[] = "CcnK";          /* set up swapping flag              */
-static long lChnk = 'CcnK';
-NeedsBSwap = !!memcmp(szChnk, &lChnk, 4);
-
 bBank = NULL;                           /* no bank data loaded               */
 Unload();                               /* reset all parameters              */
 }
@@ -152,26 +181,6 @@ pSet->numPrograms = 1;
 pSet->chunkSize = nChunkSize;
 
 return true;
-}
-
-/*****************************************************************************/
-/* SwapBytes : swaps bytes for big/little-endian difference                  */
-/*****************************************************************************/
-
-void CFxBank::SwapBytes(long &l)
-{
-unsigned char *b = (unsigned char *)&l;
-long intermediate =  ((long)b[0] << 24) |
-                     ((long)b[1] << 16) |
-                     ((long)b[2] << 8) |
-                     (long)b[3];
-l = intermediate;
-}
-
-void CFxBank::SwapBytes(float &f)
-{
-long *pl = (long *)&f;
-SwapBytes(*pl);
 }
 
 /*****************************************************************************/

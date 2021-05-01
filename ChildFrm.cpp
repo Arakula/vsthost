@@ -95,6 +95,7 @@ BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWnd)
 	ON_COMMAND(IDM_PROGRAM_PREV, OnProgramPrev)
 	ON_UPDATE_COMMAND_UI(IDM_PROGRAM_NEXT, OnUpdateProgramNext)
 	ON_UPDATE_COMMAND_UI(IDM_PROGRAM_PREV, OnUpdateProgramPrev)
+    ON_COMMAND(IDM_DISPLAY_UPDATE, OnDisplayUpdate)
 	//}}AFX_MSG_MAP
     ON_COMMAND_RANGE(IDM_EFF_PROGRAM_0, IDM_EFF_PROGRAM_0+999, OnSetProgram)
 END_MESSAGE_MAP()
@@ -985,4 +986,17 @@ if (!pEffect)
   pCmdUI->Enable(FALSE);
 else
   pCmdUI->Enable(pEffect->GetPrev() || pEffect->GetNext());
+}
+
+/*****************************************************************************/
+/* OnDisplayUpdate : called when the effect wants to update the display      */
+/*****************************************************************************/
+
+void CChildFrame::OnDisplayUpdate() 
+{
+if (pEditWnd)
+  pEditWnd->Update();
+if (pParmWnd)
+  pParmWnd->Update();
+SetupTitle();
 }

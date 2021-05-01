@@ -21,8 +21,10 @@
 #define IDD_EFFCHAIN                    142
 #define IDI_KBD                         143
 #define IDD_MIDIKEYB                    144
+#define IDD_ASIOCHN                     146
 #define IDS_MIDINONE                    200
 #define IDS_WAVENONE                    201
+#define IDS_NOCHANNEL                   202
 #define IDC_PARMLIST                    1000
 #define IDC_PARMVAL                     1001
 #define IDC_PARMTEXT                    1002
@@ -53,6 +55,8 @@
 #define IDC_EFFECTS                     1027
 #define IDC_MKBDCTRL                    1028
 #define IDC_CHN                         1032
+#define IDC_INPUT_CHANNELS              1033
+#define IDC_OUTPUT_CHANNELS             1034
 #define IDM_EFF_EDIT                    32771
 #define IDM_EFF_PROGRAM_NAME            32772
 #define IDM_EFF_EDIT_PARMS              32773
@@ -79,6 +83,8 @@
 #define IDM_PROGRAM_PREV                32797
 #define IDM_MIDIKEYB                    32798
 #define IDM_MIDIKEYB_PROPERTIES         32800
+#define IDM_DISPLAY_UPDATE              32801
+#define IDM_ASIO_CHN                    32802
 #define IDM_EFF_PROGRAM_0               33000
 
 // Next default values for new objects
@@ -86,9 +92,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        146
-#define _APS_NEXT_COMMAND_VALUE         32801
-#define _APS_NEXT_CONTROL_VALUE         1033
+#define _APS_NEXT_RESOURCE_VALUE        147
+#define _APS_NEXT_COMMAND_VALUE         32803
+#define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
