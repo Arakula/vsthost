@@ -809,6 +809,7 @@ CSmpEffect::CSmpEffect(CVSTHost *pHost)
 {
 InitializeCriticalSection(&cs);
 
+pFrameWnd = 0;
 pEditWnd = pParmWnd = 0;
 inBufs = outBufs = 0;
 nAllocatedInbufs = nAllocatedOutbufs = 0;
@@ -1003,7 +1004,8 @@ if (pEditWnd)
 
 bool CSmpEffect::OnUpdateDisplay()
 {
-pFrameWnd->PostMessage(WM_COMMAND, IDM_DISPLAY_UPDATE);
+if (pFrameWnd)
+  pFrameWnd->PostMessage(WM_COMMAND, IDM_DISPLAY_UPDATE);
 return CEffect::OnUpdateDisplay();
 }
 
