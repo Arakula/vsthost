@@ -332,6 +332,7 @@ bool CSmpVSTHost::OnProcessEvents(int nEffect, VstEvents *events)
 {
 int i;
 CMidiMsg msg;
+bool bErr = false;
 
 for (i = 0; i < events->numEvents; i++) /* process all sent MIDI events      */
   {
@@ -339,17 +340,22 @@ for (i = 0; i < events->numEvents; i++) /* process all sent MIDI events      */
     {
     case kVstMidiType :                 /* normal MIDI message?              */
       msg.Set(((VstMidiEvent *)(events->events[i]))->midiData, 3);
-      MidiOut.Output(msg);              /* send it to MIDI Out               */
+      bErr |= !MidiOut.Output(msg);     /* send it to MIDI Out               */
       break;
     case kVstSysExType :                /* SysEx message ?                   */
       msg.Set(((VstMidiSysexEvent *)(events->events[i]))->sysexDump,
               ((VstMidiSysexEvent *)(events->events[i]))->dumpBytes);
-      MidiOut.Output(msg);              /* send it to MIDI Out               */
+      bErr |= !MidiOut.Output(msg);     /* send it to MIDI Out               */
       break;
+#if 0 // silently ignore all non-MIDI events
+    default :                           /* anything else?                    */
+      bErr = true;
+      break;
+#endif
     }
   }
 
-return CVSTHost::OnProcessEvents(nEffect, events);
+return !bErr;
 }
 
 /*****************************************************************************/
