@@ -500,15 +500,17 @@ if (pEff->bWantMidi)                    /* if effect wants MIDI events       */
     }
   }
 
+float *pEmpty = GetApp()->GetEmptyBuffer();
 for (j = 0; j < nChannels; j++)
   pEff->SetInputBuffer(j, pBuffer[j]);
+for (; j < pEff->pEffect->numInputs; j++)
+  pEff->SetInputBuffer(j, pEmpty);
 
                                         /* then process the buffer itself    */
                                         /* clean all output buffers          */
 // NB: this has to be done even in EffProcessReplacing() since some VSTIs
 // (most notably those from Steinberg... hehe) obviously don't implement 
 // processReplacing() as a separate function but rather use process()
-float *pEmpty = GetApp()->GetEmptyBuffer();
 for (j = 0; j < pEff->pEffect->numOutputs; j++)
   {
   pBuf1 = pEff->GetOutputBuffer(j);

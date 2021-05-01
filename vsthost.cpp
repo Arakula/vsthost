@@ -1449,16 +1449,35 @@ pCmdUI->Enable(!!pMidiKeyb);            /* show whether it's there           */
 
 void CVsthostApp::OnEffIdle(int nEffect)
 {
-MSG msg;
+#define MSGHEAPSIZE 200
+MSG msg[MSGHEAPSIZE];
+int i, nCount = 0;
+while ((::PeekMessage(msg + nCount, NULL, WM_TIMER, WM_TIMER, PM_REMOVE)) ||
+       (::PeekMessage(msg + nCount, NULL, WM_PAINT, WM_PAINT, PM_REMOVE)) ||
+       (::PeekMessage(msg + nCount, NULL, WM_NCPAINT, WM_NCPAINT, PM_REMOVE)))
+  {                                     /* prohibit multiple paints for a wnd*/
+  if ((msg[nCount].message == WM_PAINT) ||
+      (msg[nCount].message == WM_NCPAINT))
+    {
+    for (i = nCount - 1; i >= 0; i--)
+      if ((msg[i].message == msg[nCount].message) &&
+          (msg[i].hwnd    == msg[nCount].hwnd) &&
+          (msg[i].wParam  == msg[nCount].wParam))
+        break;
+    if (i >= 0)
+      break;
+    }
+  nCount++;
 
-while ((::PeekMessage(&msg, NULL, WM_TIMER, WM_TIMER, PM_REMOVE)) ||
-       (::PeekMessage(&msg, NULL, WM_PAINT, WM_PAINT, PM_REMOVE)) ||
-       (::PeekMessage(&msg, NULL, WM_NCPAINT, WM_NCPAINT, PM_REMOVE)))
+  if (nCount >= MSGHEAPSIZE)
+    break;
+  }
+for (i = 0; i < nCount; i++)
   {
-  if (!PreTranslateMessage(&msg))
+  if (!PreTranslateMessage(msg + i))
 	{
-    ::TranslateMessage(&msg);
-	::DispatchMessage(&msg);
+    ::TranslateMessage(msg + i);
+	::DispatchMessage(msg + i);
 	}
   }
 }

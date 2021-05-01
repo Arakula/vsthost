@@ -249,9 +249,7 @@ protected:
 protected:
 	static void SwapBytes(float &f);
 	static void SwapBytes(long &l);
-#if defined(VST_2_4_EXTENSIONS)
 	static void SwapBytes(VstInt32 &vi);
-#endif
 
 };
 

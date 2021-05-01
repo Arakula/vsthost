@@ -10,10 +10,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Add manually edited resources here...
 
-#define IDR_MANIFEST                    1
-#ifndef RT_MANIFEST
-#define RT_MANIFEST                     24
+#ifndef NOMANIFEST
+  #define IDR_MANIFEST                    1
+  #ifndef RT_MANIFEST
+    #define RT_MANIFEST                     24
+  #endif
+  IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "res\\manifest.xml"
+#else
+  #pragma message("Using internal manifest")
 #endif
-IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "res\\manifest.xml"
 
 /////////////////////////////////////////////////////////////////////////////

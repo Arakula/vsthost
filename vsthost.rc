@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -28,25 +28,25 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\idr_main.ico"
-IDI_EFFEDIT             ICON    DISCARDABLE     "res\\effedit.ico"
-IDI_EFFINFO             ICON    DISCARDABLE     "res\\effinfo.ico"
-IDI_EFFPARM             ICON    DISCARDABLE     "res\\effparm.ico"
+IDR_MAINFRAME           ICON                    "res\\idr_main.ico"
+IDI_EFFEDIT             ICON                    "res\\effedit.ico"
+IDI_EFFINFO             ICON                    "res\\effinfo.ico"
+IDI_EFFPARM             ICON                    "res\\effparm.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
-IDB_MDIBACKGND          BITMAP  DISCARDABLE     "res\\backgnd.bmp"
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+IDB_MDIBACKGND          BITMAP                  "res\\backgnd.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+IDR_MAINFRAME TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_FILE_NEW
     SEPARATOR
@@ -75,7 +75,7 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+IDR_MAINFRAME MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -109,7 +109,7 @@ BEGIN
     END
 END
 
-IDR_VSTHOSTYPE MENU PRELOAD DISCARDABLE 
+IDR_VSTHOSTYPE MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -168,7 +168,7 @@ BEGIN
     END
 END
 
-IDR_EFFECTTYPE MENU PRELOAD DISCARDABLE 
+IDR_EFFECTTYPE MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -233,7 +233,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+IDR_MAINFRAME ACCELERATORS 
 BEGIN
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
@@ -256,53 +256,45 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 63
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 63
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About VSTHost"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "Sample VST Host Version 1.16q",IDC_STATIC,40,10,119,8,
-                    SS_NOPREFIX
-    LTEXT           "Copyright (C) 2001-2008 H. Seib",IDC_STATIC,40,20,119,8
+    LTEXT           "Sample VST Host Version 1.16r",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2001-2021 H. Seib",IDC_STATIC,40,20,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
-    LTEXT           "VST PlugIn Technology by Steinberg",IDC_STATIC,40,35,
-                    130,8
+    LTEXT           "VST PlugIn Technology by Steinberg",IDC_STATIC,40,35,130,8
     LTEXT           "ASIO Technology by Steinberg",IDC_STATIC,40,45,130,8
 END
 
-IDD_MIDIDEV DIALOG DISCARDABLE  0, 0, 219, 73
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_MIDIDEV DIALOG  0, 0, 219, 73
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Select MIDI Devices"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "&Input Port:",IDC_STATIC,7,9,48,8
-    COMBOBOX        IDC_INPUTPORT,55,7,157,86,CBS_DROPDOWNLIST | 
-                    CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Pass Through to Output",IDC_PASSTHRU,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,7,22,205,10
+    COMBOBOX        IDC_INPUTPORT,55,7,157,86,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Pass Through to Output",IDC_PASSTHRU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,22,205,10
     LTEXT           "&Output Port:",IDC_STATIC,7,35,48,8
-    COMBOBOX        IDC_OUTPUTPORT,55,33,157,68,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_OUTPUTPORT,55,33,157,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,103,52,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,162,52,50,14
 END
 
-IDD_PARMS DIALOG DISCARDABLE  0, 0, 221, 155
-STYLE DS_3DLOOK | WS_CHILD | WS_VISIBLE
+IDD_PARMS DIALOG  0, 0, 221, 155
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         IDC_PARMLIST,7,7,169,128,LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Slider1",IDC_PARMVAL,"msctls_trackbar32",TBS_VERT | 
-                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,189,7,15,116
-    LTEXT           "Current Parameter Text",IDC_PARMTEXT,7,136,207,12,
-                    SS_CENTERIMAGE | SS_SUNKEN
+    LISTBOX         IDC_PARMLIST,7,7,169,128,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Slider1",IDC_PARMVAL,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,189,7,15,116
+    LTEXT           "Current Parameter Text",IDC_PARMTEXT,7,136,207,12,SS_CENTERIMAGE | SS_SUNKEN
     CTEXT           "Value",IDC_RVALUE,179,126,35,8,WS_DISABLED
 END
 
-IDD_EFFPGNAME DIALOG DISCARDABLE  0, 0, 187, 54
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EFFPGNAME DIALOG  0, 0, 187, 54
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Set Program Name"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -312,126 +304,100 @@ BEGIN
     EDITTEXT        IDC_PROGNAME,7,24,115,14,ES_AUTOHSCROLL
 END
 
-IDD_WAVEDEV DIALOG DISCARDABLE  0, 0, 219, 82
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_WAVEDEV DIALOG  0, 0, 219, 82
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Select Wave Devices"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,103,58,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,162,58,50,14
     LTEXT           "&Input port: ",IDC_STATIC,7,9,48,8
-    COMBOBOX        IDC_INPUTPORT,55,7,157,86,CBS_DROPDOWNLIST | 
-                    CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_INPUTPORT,55,7,157,86,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Output Port:",IDC_STATIC,7,26,48,8
-    COMBOBOX        IDC_OUTPUTPORT,55,24,157,68,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_OUTPUTPORT,55,24,157,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Buffer Size:",IDC_STATIC,7,43,34,8
-    COMBOBOX        IDC_BUFSIZE,55,41,157,92,CBS_DROPDOWN | WS_VSCROLL | 
-                    WS_TABSTOP
+    COMBOBOX        IDC_BUFSIZE,55,41,157,92,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_EFFMIDICHN DIALOG DISCARDABLE  0, 0, 187, 98
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EFFMIDICHN DIALOG  0, 0, 187, 98
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "MIDI Channels"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
-    LTEXT           "Effect accepts input from the following MIDI channels:",
-                    IDC_STATIC,7,7,119,24
-    CONTROL         "1",IDC_CHN0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,31,
-                    20,10
-    CONTROL         "2",IDC_CHN1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,40,
-                    20,10
-    CONTROL         "3",IDC_CHN2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,49,
-                    20,10
-    CONTROL         "4",IDC_CHN3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,58,
-                    20,10
-    CONTROL         "5",IDC_CHN4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,31,
-                    20,10
-    CONTROL         "6",IDC_CHN5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,40,
-                    20,10
-    CONTROL         "7",IDC_CHN6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,49,
-                    20,10
-    CONTROL         "8",IDC_CHN7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,58,
-                    20,10
-    CONTROL         "9",IDC_CHN8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,31,
-                    20,10
-    CONTROL         "10",IDC_CHN9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,
-                    40,23,10
-    CONTROL         "11",IDC_CHN10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,
-                    49,23,10
-    CONTROL         "12",IDC_CHN11,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,
-                    58,23,10
-    CONTROL         "13",IDC_CHN12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
-                    31,23,10
-    CONTROL         "14",IDC_CHN13,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
-                    40,23,10
-    CONTROL         "15",IDC_CHN14,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
-                    49,23,10
-    CONTROL         "16",IDC_CHN15,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
-                    58,23,10
+    LTEXT           "Effect accepts input from the following MIDI channels:",IDC_STATIC,7,7,119,24
+    CONTROL         "1",IDC_CHN0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,31,20,10
+    CONTROL         "2",IDC_CHN1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,40,20,10
+    CONTROL         "3",IDC_CHN2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,49,20,10
+    CONTROL         "4",IDC_CHN3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,58,20,10
+    CONTROL         "5",IDC_CHN4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,31,20,10
+    CONTROL         "6",IDC_CHN5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,40,20,10
+    CONTROL         "7",IDC_CHN6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,49,20,10
+    CONTROL         "8",IDC_CHN7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,58,20,10
+    CONTROL         "9",IDC_CHN8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,31,20,10
+    CONTROL         "10",IDC_CHN9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,40,23,10
+    CONTROL         "11",IDC_CHN10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,49,23,10
+    CONTROL         "12",IDC_CHN11,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,58,23,10
+    CONTROL         "13",IDC_CHN12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,31,23,10
+    CONTROL         "14",IDC_CHN13,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,40,23,10
+    CONTROL         "15",IDC_CHN14,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,49,23,10
+    CONTROL         "16",IDC_CHN15,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,58,23,10
     PUSHBUTTON      "Clear All",IDC_CLEAR,68,77,50,14
     PUSHBUTTON      "Set All",IDC_SET,7,77,50,14
 END
 
-IDD_EFFCHAIN DIALOG DISCARDABLE  0, 0, 224, 99
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EFFCHAIN DIALOG  0, 0, 224, 99
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Chain Effect after..."
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         IDC_EFFECTS,7,7,156,85,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
-                    WS_TABSTOP
+    LISTBOX         IDC_EFFECTS,7,7,156,85,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,167,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,167,24,50,14
 END
 
 IDD_MIDIKEYB DIALOGEX 40, 30, 355, 44
-STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+STYLE DS_SETFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_TOOLWINDOW
 CAPTION "MIDI Keyboard"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MKBDCTRL,"{1BB35578-331C-11D1-801A-0004ACEC1B53}",
-                    WS_TABSTOP,0,0,355,44
+    CONTROL         "",IDC_MKBDCTRL,"{1BB35578-331C-11D1-801A-0004ACEC1B53}",WS_TABSTOP,0,0,355,44
 END
 
-IDD_ASIOCHN DIALOG DISCARDABLE  0, 0, 223, 66
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ASIOCHN DIALOG  0, 0, 223, 66
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "ASIO Channel Selection"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "&Input Channels:",IDC_STATIC,7,7,150,8
-    COMBOBOX        IDC_INPUT_CHANNELS,7,18,148,100,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_INPUT_CHANNELS,7,18,148,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Output Channels:",IDC_STATIC,7,36,150,8
-    COMBOBOX        IDC_OUTPUT_CHANNELS,7,47,148,117,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_OUTPUT_CHANNELS,7,47,148,117,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,166,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,166,24,50,14
 END
 
-IDD_SHELLSEL DIALOG DISCARDABLE  0, 0, 187, 98
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_SHELLSEL DIALOG  0, 0, 187, 98
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Select Plugin..."
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         IDC_NAMES,7,7,118,84,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
-                    WS_TABSTOP
+    LISTBOX         IDC_NAMES,7,7,118,84,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
 END
 
 
-#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,16,17,1
- PRODUCTVERSION 1,16,17,1
+ FILEVERSION 1,16,18,1
+ PRODUCTVERSION 1,16,18,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -446,18 +412,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "\0"
-            VALUE "CompanyName", "\0"
-            VALUE "FileDescription", "VSTHost - Sample VST Host\0"
-            VALUE "FileVersion", "1.16q\0"
-            VALUE "InternalName", "vsthost\0"
-            VALUE "LegalCopyright", "Copyright (C) 2001-2008 H. Seib\0"
-            VALUE "LegalTrademarks", "ASIO & VST PlugIn Technology by Steinberg\0"
-            VALUE "OriginalFilename", "vsthost.exe\0"
-            VALUE "PrivateBuild", "\0"
-            VALUE "ProductName", "VSTHost - Sample VST Host\0"
-            VALUE "ProductVersion", "1.16q\0"
-            VALUE "SpecialBuild", "\0"
+            VALUE "FileDescription", "VSTHost - Sample VST Host"
+            VALUE "FileVersion", "1.16r"
+            VALUE "InternalName", "vsthost"
+            VALUE "LegalCopyright", "Copyright (C) 2001-2021 H. Seib"
+            VALUE "LegalTrademarks", "ASIO & VST PlugIn Technology by Steinberg"
+            VALUE "OriginalFilename", "vsthost.exe"
+            VALUE "ProductName", "VSTHost - Sample VST Host"
+            VALUE "ProductVersion", "1.16r"
         END
     END
     BLOCK "VarFileInfo"
@@ -466,8 +428,6 @@ BEGIN
     END
 END
 
-#endif    // !_MAC
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -475,7 +435,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -588,7 +548,7 @@ END
 // String Table
 //
 
-STRINGTABLE PRELOAD DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDR_MAINFRAME           "vsthost"
     IDR_VSTHOSTYPE          "\nVsthos\nVsthos"
@@ -596,13 +556,13 @@ BEGIN
     IDS_MKBDNOTREG          "The Midi Keyboard control could not be loaded.\nThis little gimmick can be found in the VSTHost package.\nOpen a command line in the directory where you put it and enter\n  regsvr32 mkbd.ocx\nto install it."
 END
 
-STRINGTABLE PRELOAD DISCARDABLE 
+STRINGTABLE 
 BEGIN
     AFX_IDS_APP_TITLE       "vsthost"
     AFX_IDS_IDLEMESSAGE     "Ready"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -612,25 +572,25 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_FILE_NEW             "Load a new VST effect\nNew Effect"
     ID_FILE_CLOSE           "Close the active document\nClose"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
     ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
     ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
@@ -639,7 +599,7 @@ BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_EDIT_CLEAR           "Erase the selection\nErase"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
@@ -654,13 +614,13 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCSIZE          "Change the window size"
     AFX_IDS_SCMOVE          "Change the window position"
@@ -671,14 +631,14 @@ BEGIN
     AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
     AFX_IDS_MDICHILD        "Activate this window"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDM_EFF_EDIT            "Open Effect Editor\nEffect Edit"
     IDM_EFF_PROGRAM_NAME    "Set the current program's name\nProgram Name"
@@ -695,14 +655,14 @@ BEGIN
     IDM_EFF_SAVE            "Save an Effect Bank (.fxb)\nSave Bank"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDS_MIDINONE            "* No MIDI *"
     IDS_WAVENONE            "* No Wave *"
     IDS_NOCHANNEL           "* No Channel Selection *"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDM_EFF_SAVEAS          "Saves the Effect Bank (.fxb) to a new name\nSave Bank As"
     IDM_ENG_START           "Starts or stops the VST Engine\nRun"
@@ -716,7 +676,7 @@ BEGIN
     IDM_MIDIKEYB            "Shows / Hides the MIDI Keyboard\nMIDI Keyboard"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE 
 BEGIN
     IDM_MIDIKEYB_PROPERTIES "Configures the MIDI Keyboard\nConfigure MIDI Keyboard"
     IDM_ASIO_CHN            "Select the used ASIO I/O Channels\nASIO Channel Selection"
@@ -741,18 +701,18 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN_AUSTRIAN
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"

@@ -67,7 +67,6 @@ long *pl = (long *)&f;
 SwapBytes(*pl);
 }
 
-#if defined(VST_2_4_EXTENSIONS)
 void CFxBase::SwapBytes(VstInt32 &vi)
 {
 unsigned char *b = (unsigned char *)&vi;
@@ -77,7 +76,6 @@ VstInt32 intermediate =  ((VstInt32)b[0] << 24) |
                          (VstInt32)b[3];
 vi = intermediate;
 }
-#endif
 
 
 /*===========================================================================*/
