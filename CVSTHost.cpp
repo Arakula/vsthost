@@ -154,8 +154,8 @@ return *this;
 
 bool CFxBank::SetSize(int nPrograms, int nParams)
 {
-int nTotLen = sizeof(fxBank) - sizeof(fxProgram);
-int nProgLen = sizeof(fxProgram) + (nParams - 1) * sizeof(float);
+int nTotLen = sizeof(SFxBankBase);
+int nProgLen = sizeof(SFxProgramBase) + nParams * sizeof(float);
 nTotLen += nPrograms * nProgLen;
 unsigned char *nBank = new unsigned char[nTotLen];
 if (!nBank)
@@ -167,35 +167,31 @@ nBankLen = nTotLen;
 bChunk = false;
 
 memset(nBank, 0, nTotLen);              /* initialize new bank               */
-fxBank *pBank = (fxBank *)bBank;
+SFxBank *pBank = (SFxBank *)bBank;
 pBank->chunkMagic = cMagic;
 pBank->byteSize = 0;
 pBank->fxMagic = bankMagic;
 pBank->version = MyVersion;
 pBank->numPrograms = nPrograms;
 
-unsigned char *bProg = (unsigned char *)pBank->content.programs;
+unsigned char *bProg = (unsigned char *)pBank->programs;
 for (int i = 0; i < nPrograms; i++)
   {
-  fxProgram * pProg = (fxProgram *)(bProg + i * nProgLen);
+  SFxProgram * pProg = (SFxProgram *)(bProg + i * nProgLen);
   pProg->chunkMagic = cMagic;
   pProg->byteSize = 0;
   pProg->fxMagic = fMagic;
   pProg->version = 1;
   pProg->numParams = nParams;
   for (int j = 0; j < nParams; j++)
-#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
-    pProg->content.params[j] = 0.0;
-#else
-    pProg->params[j] = 0.0;
-#endif
+    pProg->params[j] = 0.f;
   }
 return true;
 }
 
 bool CFxBank::SetSize(int nChunkSize)
 {
-int nTotLen = ((int)((fxBank *)0)->content.data.chunk) + nChunkSize;
+int nTotLen = ((int)((SFxBankChunk *)0)->chunk) + nChunkSize;
 unsigned char *nBank = new unsigned char[nTotLen];
 if (!nBank)
   return false;
@@ -206,13 +202,12 @@ nBankLen = nTotLen;
 bChunk = true;
 
 memset(nBank, 0, nTotLen);              /* initialize new bank               */
-fxBank *pBank = (fxBank *)bBank;
+SFxBankChunk *pBank = (SFxBankChunk *)bBank;
 pBank->chunkMagic = cMagic;
-pBank->byteSize = 0;
 pBank->fxMagic = chunkBankMagic;
 pBank->version = MyVersion;
 pBank->numPrograms = 1;
-pBank->content.data.size = nChunkSize;
+pBank->size = nChunkSize;
 
 return true;
 }
@@ -240,7 +235,8 @@ try
                                         /* read chunk set to determine cnt.  */
   if (fread(nBank, 1, tLen, fp) != tLen)
     throw (int)1;
-  fxBank *pBank = (fxBank *)nBank;      /* position on bank                  */
+                                        /* position on bank                  */
+  SFxBankBase *pBank = (SFxBankBase *)nBank;
   if (NeedsBSwap)                       /* eventually swap necessary bytes   */
     {
     SwapBytes(pBank->chunkMagic);
@@ -260,7 +256,7 @@ try
   if (pBank->fxMagic == bankMagic)      /* if this is a bank of parameters   */
     {
                                         /* position on 1st program          */
-    fxProgram * pProg = pBank->content.programs;
+    SFxProgram * pProg = ((SFxBank *)pBank)->programs;
     int nProg = 0;
     while (nProg < pBank->numPrograms)  /* walk program list                 */
       {
@@ -282,18 +278,16 @@ try
         {                               /* swap all parameter bytes          */
         int j;
         for (j = 0; j < pProg->numParams; j++)
-#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
-          SwapBytes(pProg->content.params[j]);
-#else
           SwapBytes(pProg->params[j]);
-#endif
         }
-      unsigned char *pNext = (unsigned char *)(pProg + 1);
-      pNext += (sizeof(float) * (pProg->numParams - 1));
+
+      unsigned char *pNext = (unsigned char *)pProg;
+      pNext += sizeof(SFxProgramBase);
+      pNext += (sizeof(float) * pProg->numParams);
       if (pNext > nBank + tLen)         /* VERY simple fuse                  */
         throw (int)1;
       
-      pProg = (fxProgram *)pNext;
+      pProg = (SFxProgram *)pNext;
       nProg++;
       }
     }
@@ -302,9 +296,10 @@ try
     {
     if (NeedsBSwap)                     /* eventually swap necessary bytes   */
       {
-      SwapBytes(pBank->content.data.size);
+      SFxBankChunk *pChunk = (SFxBankChunk *)pBank;
+      SwapBytes(pChunk->size);
                                         /* size check - must not be too large*/
-      if (pBank->content.data.size + ((size_t)((fxBank *)0)->content.data.chunk) > tLen)
+      if (pChunk->size + ((size_t)((SFxBankChunk *)0)->chunk) > tLen)
         throw (int)1;
       }
     }
@@ -338,8 +333,8 @@ unsigned char *nBank = new unsigned char[nBankLen];
 if (!nBank)                             /* if impossible                     */
   return false;
 memcpy(nBank, bBank, nBankLen);
-
-fxBank *pBank = (fxBank *)nBank;        /* position on bank                  */
+                                        /* position on bank                  */
+SFxBankBase *pBank = (SFxBankBase *)nBank;
 int numPrograms = pBank->numPrograms;
 if (NeedsBSwap)                         /* if byte-swapping needed           */
   {
@@ -354,12 +349,12 @@ if (NeedsBSwap)                         /* if byte-swapping needed           */
 if (bChunk)
   {
   if (NeedsBSwap)                       /* if byte-swapping needed           */
-    SwapBytes(pBank->content.data.size);
+    SwapBytes(((SFxBankChunk *)pBank)->size);
   }
 else
   {
                                         /* position on 1st program           */
-  fxProgram * pProg = pBank->content.programs;
+  SFxProgram * pProg = ((SFxBank *)pBank)->programs;
   int numParams = pProg->numParams;
   int nProg = 0;
   while (nProg < numPrograms)           /* walk program list                 */
@@ -374,18 +369,15 @@ else
       SwapBytes(pProg->fxVersion);
       SwapBytes(pProg->numParams);
       for (int j = 0; j < numParams; j++)
-#ifndef chunkGlobalMagic                /* VST SDK 2.4 rev2?                 */
-        SwapBytes(pProg->content.params[j]);
-#else
         SwapBytes(pProg->params[j]);
-#endif
       }
-    unsigned char *pNext = (unsigned char *)(pProg + 1);
-    pNext += (sizeof(float) * (numParams - 1));
+    unsigned char *pNext = (unsigned char *)pProg;
+    pNext += sizeof(SFxProgramBase);
+    pNext += (sizeof(float) * numParams);
     if (pNext > nBank + nBankLen)       /* VERY simple fuse                  */
       break;
     
-    pProg = (fxProgram *)pNext;
+    pProg = (SFxProgram *)pNext;
     nProg++;
     }
   }
@@ -429,16 +421,18 @@ bChunk = false;                         /* and of course it's no chunk.      */
 /* GetProgram : returns pointer to one of the loaded programs                */
 /*****************************************************************************/
 
-fxProgram * CFxBank::GetProgram(int nProgNum)
+SFxProgram * CFxBank::GetProgram(int nProgNum)
 {
 if ((!IsLoaded()) || (bChunk))          /* if nothing loaded or chunk file   */
   return NULL;                          /* return OUCH                       */
 
-fxBank *pBank = (fxBank *)bBank;        /* position on 1st program           */
-fxProgram * pProg = pBank->content.programs;
-int nProgLen = sizeof(fxProgram) + (pProg->numParams - 1) * sizeof(float);
+SFxBank *pBank = (SFxBank *)bBank;      /* position on 1st program           */
+SFxProgram * pProg = pBank->programs;
+int nProgLen = sizeof(SFxProgramBase) + 
+               pProg->numParams * sizeof(float);
+
 unsigned char *pThatProg = ((unsigned char *)pProg) + (nProgNum * nProgLen);
-pProg = (fxProgram *)pThatProg;
+pProg = (SFxProgram *)pThatProg;
 return pProg;
 }
 

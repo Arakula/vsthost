@@ -288,14 +288,14 @@ while (nLength)                         /* do as often as needed             */
     return;                             /* can't process this one...         */
     }
     
-  float fsmpl, fMax = 0.f, fCur;        /* diagnostic report value           */
+  float fsmpl, fMax = 0.f;              /* diagnostic report value           */
   for (j = 0; j < use; j++)             /* then convert all samples to target*/
     {
     for (k = 0; k < 2; k++)             /* format                            */
       {
       fsmpl = pVstData[k][j + off];
 #if defined(_DEBUG) || defined(_DEBUGFILE)
-      fCur = fabsf(fsmpl);              /* just us diagnostics in here :-)   */
+      float fCur = fabsf(fsmpl);        /* just us diagnostics in here :-)   */
       if (fCur > fMax)
         fMax = fCur;
 #endif
