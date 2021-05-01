@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #include "stdafx.h"
-#include "vsthost.h"
+
 #include "ChildView.h"
 
 #ifdef _DEBUG

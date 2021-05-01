@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ******************************************************************************/
 
 #include "stdafx.h"
-#include "vsthost.h"
+
 #include "SmpVSTHost.h"
 #include "EffChainDlg.h"
 
@@ -79,7 +79,7 @@ if (!pCurEff)                           /* if no current effect,             */
   return TRUE;                          /* start with empty list box         */
 
 int i, j;
-CSmpVSTHost &Host = ((CVsthostApp *)AfxGetApp())->vstHost;
+CSmpVSTHost &Host = GetApp()->vstHost;
 CSmpEffect *pTest;
 for (i = 0; i < Host.GetSize(); i++)    /* walk through loaded effects       */
   {

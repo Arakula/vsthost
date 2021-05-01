@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ******************************************************************************/
 
 #include "stdafx.h"
-#include "vsthost.h"
+
 #include "mainfrm.h"
 #include "childfrm.h"
 #include "EffEditWnd.h"
@@ -31,8 +31,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-#define GetApp()  ((CVsthostApp *)AfxGetApp())
 
 /*===========================================================================*/
 /* CEffEditDlg dialog                                                        */

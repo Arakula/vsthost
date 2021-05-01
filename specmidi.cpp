@@ -30,8 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mfcmidi.h"                    /* MFC Midi definitions              */
 #include "specmidi.h"                   /* private definitions               */
 
-#include "vsthost.h"                    /* application specific header       */
-
 #ifdef _DEBUG
 #ifdef WIN32
 #define new DEBUG_NEW
@@ -43,8 +41,6 @@ static char THIS_FILE[] = __FILE__;
 /*****************************************************************************/
 /* Definitions                                                               */
 /*****************************************************************************/
-
-#define GetApp()  ((CVsthostApp *)AfxGetApp())
 
 /*****************************************************************************/
 /* Global Data                                                               */

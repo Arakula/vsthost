@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ******************************************************************************/
 
 #include "stdafx.h"
-#include "vsthost.h"
+
 #include "childfrm.h"
 #include "EffectWnd.h"
 #include "prognamedlg.h"
@@ -31,8 +31,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-#define GetApp()  ((CVsthostApp *)AfxGetApp())
 
 /*===========================================================================*/
 /* CEffectWnd class members                                                  */
@@ -709,4 +707,21 @@ pMain->OnProgramPrev();
 void CEffectWnd::OnUpdateProgramPrev(CCmdUI* pCmdUI) 
 {
 pMain->OnUpdateProgramPrev(pCmdUI);
+}
+
+/*****************************************************************************/
+/* PreTranslateMessage : called before a message is processed                */
+/*****************************************************************************/
+
+BOOL CEffectWnd::PreTranslateMessage(MSG* pMsg) 
+{
+if (!pView)                             /* if this is an Effect window       */
+  {
+  CWnd *pChild = GetWindow(GW_CHILD);   /* retrieve handle to 1st child      */
+  if ((pChild) &&                       /* if child is there                 */
+      (pChild->IsDialogMessage(pMsg)))  /* and this is a dialog message      */
+    return TRUE;                        /* swallow the message               */
+  }
+	
+return CMDIChildWnd::PreTranslateMessage(pMsg);
 }

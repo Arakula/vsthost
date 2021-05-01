@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ******************************************************************************/
 
 #include "stdafx.h"
-#include "vsthost.h"
+
 #include "mfcmidi.h"
 #include "MidiKeybDlg.h"
 
@@ -89,7 +89,7 @@ void CMidiKeybDlg::OnClose()
 CDialog::OnClose();
 DestroyWindow();                        /* destroy the window                */
 delete this;                            /* and remove ourselves.             */
-((CVsthostApp *)AfxGetApp())->SetMidiKeybDlg(NULL);
+GetApp()->SetMidiKeybDlg(NULL);
 }
 
 /*****************************************************************************/
@@ -98,7 +98,7 @@ delete this;                            /* and remove ourselves.             */
 
 void CMidiKeybDlg::OnMidiMsgMkbdctrl(long msg) 
 {                                       /* pass on to VST Host               */
-((CVsthostApp *)AfxGetApp())->vstHost.OnMidiIn(CMidiMsg(msg));
+GetApp()->vstHost.OnMidiIn(CMidiMsg(msg));
 }
 
 /*****************************************************************************/

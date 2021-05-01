@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #include "stdafx.h"
-#include "vsthost.h"
+
 #include "WorkThread.h"
 
 #ifdef _DEBUG
@@ -47,7 +47,7 @@ bProcessing = FALSE;
 if (pSetHost)
   pHost = pSetHost;
 else
-  pHost = &((CVsthostApp *)AfxGetApp())->vstHost;
+  pHost = &GetApp()->vstHost;
 
 hEvent = 0;
 pEvtThread = NULL;

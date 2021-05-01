@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ******************************************************************************/
 
 #include "stdafx.h"
-#include "vsthost.h"
+
 #include "EffSecWnd.h"
 
 #ifdef _DEBUG
@@ -29,8 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-
-#define GetApp()  ((CVsthostApp *)AfxGetApp())
 
 /*===========================================================================*/
 /* CEffSecWnd class members                                                  */

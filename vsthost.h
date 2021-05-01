@@ -67,6 +67,8 @@ protected:
     int nTypeWIn, nTypeWOut;
     BOOL bNoSave;
     CWnd *pMidiKeyb;
+	DWORD dwStartStamp;
+	BOOL bEngRunning;
 
 protected:
 	void SaveSetup();
@@ -74,8 +76,6 @@ protected:
 	BOOL LoadWaveOutDevice(CString sDevice, int &nBufSz);
 	BOOL LoadWaveInDevice(CString sDevice, int nBufSz = 4410);
     bool SetAsioChannels(LPCSTR lpszChnIn = "", LPCSTR lpszChnOut = "");
-	DWORD dwStartStamp;
-	BOOL bEngRunning;
 	void SetupLatency();
 	void HRTimer();
     static void CALLBACK TimerCallback(UINT uID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2);
@@ -83,6 +83,7 @@ protected:
 public:
 	CSmpVSTHost vstHost;
     CSpecAsioHost *pAsioHost;
+	CString sWaveMapper;
 
 public:
 	//{{AFX_MSG(CVsthostApp)
@@ -107,7 +108,6 @@ public:
 
 public:
 	void OnEffIdle(int nEffect = -1);
-	CString sWaveMapper;
     void SetMidiKeybDlg(CWnd *pWnd) { pMidiKeyb = pWnd; }
 	void SendResult(float **pBuffers, int nLength);
 	void FullStop();

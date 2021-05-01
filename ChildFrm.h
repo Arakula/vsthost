@@ -83,13 +83,6 @@ public:
 
 // Generated message map functions
 protected:
-	void SetupTitle();
-	CString sTitle;
-	void SaveBank(CString sName);
-	int nCanEdit;
-	HMENU m_hEditMenu;
-	CEffectWnd * pEditWnd;
-	CEffectWnd * pParmWnd;
 	//{{AFX_MSG(CChildFrame)
 	afx_msg void OnFileClose();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
@@ -117,6 +110,19 @@ protected:
 	//}}AFX_MSG
     afx_msg void OnSetProgram(UINT nID);
 	DECLARE_MESSAGE_MAP()
+
+
+protected:
+	HMENU m_hEditMenu;
+	CEffectWnd * pEditWnd;
+	CEffectWnd * pParmWnd;
+	CString sTitle;
+	int nCanEdit;
+
+protected:
+	void SetupTitle();
+	void SaveBank(CString sName);
+
 };
 
 /////////////////////////////////////////////////////////////////////////////
