@@ -504,11 +504,13 @@ AEffect *(*pMain)(long (*audioMaster)(AEffect *effect,
 
 #ifdef WIN32
 
-__try
+//__try
+try
   {
   hModule = ::LoadLibrary(name);          /* try to load the DLL               */
   }
-__except(EXCEPTION_EXECUTE_HANDLER)
+//__except(EXCEPTION_EXECUTE_HANDLER)
+catch(...)
   {
   hModule = NULL;
   }
@@ -523,11 +525,13 @@ if (hModule)                            /* if there, get its main() function */
 
 if (pMain)                              /* initialize effect                 */
   {
-  __try
+//  __try
+  try
     {
     pEffect = pMain(pHost->AudioMasterCallback);
     }
-  __except(EXCEPTION_EXECUTE_HANDLER)
+//  __except(EXCEPTION_EXECUTE_HANDLER)
+  catch(...)
     {
     pEffect = NULL;
     }

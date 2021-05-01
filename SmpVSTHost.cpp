@@ -916,11 +916,13 @@ bool CSmpEffect::Unload()
 {
 bool bRC = false;
 
-__try
+//__try
+try
   {
   bRC = CEffect::Unload();
   }
-__except (EvalException(GetExceptionCode()))
+//__except (EvalException(GetExceptionCode()))
+catch(...)
   {
        // no code here; isn't executed
   }
