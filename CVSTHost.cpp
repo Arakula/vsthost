@@ -451,6 +451,7 @@ pEffect = NULL;
 sName = NULL;
 bEditOpen = false;
 bNeedIdle = false;
+bInEditIdle = false;
 bWantMidi = false;
 bInSetProgram = false;
 nIndex = -1;

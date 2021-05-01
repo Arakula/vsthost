@@ -372,6 +372,7 @@ public:
     char *sName;
     bool bEditOpen;
 	bool bNeedIdle;
+    bool bInEditIdle;
     bool bWantMidi;
     bool bInSetProgram;
     long nIndex;                        /* index in VSTHost plugin array     */
@@ -424,7 +425,7 @@ public:
     virtual long EffEditGetRect(ERect **ptr) { return EffDispatch(effEditGetRect, 0, 0, ptr); }
     virtual long EffEditOpen(void *ptr) { long l = EffDispatch(effEditOpen, 0, 0, ptr); /* if (l > 0) */ bEditOpen = true; return l; }
     virtual void EffEditClose() { EffDispatch(effEditClose); bEditOpen = false; }
-    virtual void EffEditIdle() { if (bEditOpen) EffDispatch(effEditIdle); }
+    virtual void EffEditIdle() { if ((!bEditOpen) || (bInEditIdle)) return; bInEditIdle = true; EffDispatch(effEditIdle); bInEditIdle = false; }
 #if MAC
     virtual void EffEditDraw(void *ptr) { EffDispatch(nEffect, effEditDraw, 0, 0, ptr); }
     virtual long EffEditMouse(long index, long value) { return EffDispatch(nEffect, effEditMouse, index, value); }
