@@ -261,7 +261,7 @@ CAPTION "About VSTHost"
 FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "Sample VST Host Version 1.16i",IDC_STATIC,40,10,119,8,
+    LTEXT           "Sample VST Host Version 1.16j",IDC_STATIC,40,10,119,8,
                     SS_NOPREFIX
     LTEXT           "Copyright (C) 2001-2006 H. Seib",IDC_STATIC,40,20,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
@@ -429,8 +429,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,16,9,1
- PRODUCTVERSION 1,16,9,1
+ FILEVERSION 1,16,10,1
+ PRODUCTVERSION 1,16,10,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -448,14 +448,14 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "VSTHost - Sample VST Host\0"
-            VALUE "FileVersion", "1.16i\0"
+            VALUE "FileVersion", "1.16j\0"
             VALUE "InternalName", "vsthost\0"
             VALUE "LegalCopyright", "Copyright (C) 2001-2006 H. Seib\0"
             VALUE "LegalTrademarks", "ASIO & VST PlugIn Technology by Steinberg\0"
             VALUE "OriginalFilename", "vsthost.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "VSTHost - Sample VST Host\0"
-            VALUE "ProductVersion", "1.16i\0"
+            VALUE "ProductVersion", "1.16j\0"
             VALUE "SpecialBuild", "\0"
         END
     END

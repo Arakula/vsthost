@@ -1415,9 +1415,13 @@ return false;
 
 long CVSTHost::OnUpdateSampleRate(int nEffect)
 {
-CEffect *pEffect = GetAt(nEffect);
-if (pEffect)
-  pEffect->EffSetSampleRate(fSampleRate);
+if ((nEffect >= 0) &&                   /* if effect is already initialized, */
+    (nEffect != eEffLoading))
+  {
+  CEffect *pEffect = GetAt(nEffect);
+  if (pEffect)
+    pEffect->EffSetSampleRate(fSampleRate);
+  }
 return (long)fSampleRate;
 }
 
@@ -1427,9 +1431,13 @@ return (long)fSampleRate;
 
 long CVSTHost::OnUpdateBlockSize(int nEffect)
 {
-CEffect *pEffect = GetAt(nEffect);
-if (pEffect)
-  pEffect->EffSetBlockSize(lBlockSize);
+if ((nEffect >= 0) &&                   /* if effect is already initialized, */
+    (nEffect != eEffLoading))
+  {
+  CEffect *pEffect = GetAt(nEffect);
+  if (pEffect)
+    pEffect->EffSetBlockSize(lBlockSize);
+  }
 return lBlockSize;
 }
 
