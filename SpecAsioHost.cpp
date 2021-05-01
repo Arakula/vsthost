@@ -379,8 +379,8 @@ switch (channelInfos[nIndex].type)
     FromFloat32(source, target, 24, frames);
     break;
   case ASIOSTFloat32LSB:      // IEEE 754 32 bit float
-    memcpy(source,
-           target,
+    memcpy(target,
+           source,
            frames * sizeof(float));
     break;
   case ASIOSTFloat64LSB:      // IEEE 754 64 bit double float
