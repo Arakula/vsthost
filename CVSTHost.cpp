@@ -957,14 +957,27 @@ switch (opcode)
   case audioMasterSetOutputSampleRate :
     OnSetOutputSampleRate(nEffect, opt);
     return 1;
-#ifdef VST_2_4_EXTENSIONS
+#ifdef VST_2_3_EXTENSIONS
   case audioMasterGetOutputSpeakerArrangement :
-#else
-  case audioMasterGetSpeakerArrangement :
-#endif
+#if 0
+    // this is VST SDK 2.0 style - unfortunately, Steinberg chose to REDEFINE
+    // this opcode in later versions. This class only supports the NEW variant,
+    // which is much better anyway.
     return OnGetOutputSpeakerArrangement(nEffect, 
                                          (VstSpeakerArrangement *)value,
                                          (VstSpeakerArrangement *)ptr);
+#else
+    // CVSTHost doesn't support the old style, so only newer PlugIns are allowed.
+    if (EffDispatch(nEffect, effGetVstVersion) >= 2300)
+      return (long)OnGetOutputSpeakerArrangement(nEffect);
+    else
+      return 0;
+#endif
+#else
+  case audioMasterGetSpeakerArrangement :
+    // see above comment
+    return 0;
+#endif
   case audioMasterGetVendorString :
     return OnGetVendorString((char *)ptr);
   case audioMasterGetProductString :

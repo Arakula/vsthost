@@ -192,7 +192,7 @@ switch (opcode)
   case audioMasterSetOutputSampleRate :
     nLen = sprintf(szDebug, "callback: %d audioMasterSetOutputSampleRate %f", nEffect, opt);
     break;
-#ifdef VST_2_4_EXTENSIONS
+#ifdef VST_2_3_EXTENSIONS
   case audioMasterGetOutputSpeakerArrangement :
     nLen = sprintf(szDebug, "callback: %d audioMasterGetOutputSpeakerArrangement", nEffect);
     break;

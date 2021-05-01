@@ -739,7 +739,12 @@ public:
     virtual bool OnGetVendorString(char *text) { strcpy(text, "Seib"); return true; } // forgive this little vanity :-)
     virtual long OnGetHostVendorVersion() { return 1; }
     virtual bool OnGetProductString(char *text) { strcpy(text, "Default CVSTHost"); return true; }
+#if 0
+    // see text in CVSTHost.cpp (in CVSTHost::OnAudioMasterCallback(audioMasterGetOutputSpeakerArrangement)) on this!
     virtual bool OnGetOutputSpeakerArrangement(int nEffect, VstSpeakerArrangement* pluginInput, VstSpeakerArrangement* pluginOutput) { return false; }
+#else
+    virtual VstSpeakerArrangement *OnGetOutputSpeakerArrangement(int nEffect) { return 0; }
+#endif
     virtual void OnSetOutputSampleRate(int nEffect, float sampleRate) { }
     virtual bool OnOfflineStart(int nEffect, VstAudioFile* audioFiles, long numAudioFiles, long numNewAudioFiles) { return false; }
     virtual bool OnOfflineRead(int nEffect, VstOfflineTask* offline, VstOfflineOption option, bool readSource) { return false; }
