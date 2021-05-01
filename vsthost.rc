@@ -1,0 +1,751 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\idr_main.ico"
+IDI_EFFEDIT             ICON    DISCARDABLE     "res\\effedit.ico"
+IDI_EFFINFO             ICON    DISCARDABLE     "res\\effinfo.ico"
+IDI_EFFPARM             ICON    DISCARDABLE     "res\\effparm.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    SEPARATOR
+    BUTTON      IDM_ENG_START
+    SEPARATOR
+    BUTTON      IDM_EFF_INFO
+    BUTTON      IDM_EFF_EDIT
+    BUTTON      IDM_EFF_EDIT_PARMS
+    SEPARATOR
+    BUTTON      IDM_PROGRAM_PREV
+    BUTTON      IDM_PROGRAM_NEXT
+    BUTTON      IDM_EFF_SELPROGRAM
+    SEPARATOR
+    BUTTON      IDM_EFF_LOAD
+    BUTTON      IDM_EFF_SAVE
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New Effect\tCtrl+N",         ID_FILE_NEW
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "E&ngine"
+    BEGIN
+        MENUITEM "&Run",                        IDM_ENG_START
+        MENUITEM "R&estart",                    IDM_ENGINE_RESTART
+    END
+    POPUP "&Devices"
+    BEGIN
+        MENUITEM "&MIDI...",                    IDM_MIDIDEV
+        MENUITEM "&Wave...",                    IDM_WAVEDEV
+        MENUITEM SEPARATOR
+        MENUITEM "&Asio Control Panel...",      IDM_ASIO_CPL
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "&MIDI Keyboard",              IDM_MIDIKEYB
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About vsthost...",           ID_APP_ABOUT
+    END
+END
+
+IDR_VSTHOSTYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New Effect\tCtrl+N",         ID_FILE_NEW
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "E&ffect"
+    BEGIN
+        MENUITEM "&Name",                       IDM_EFF_PROGRAM_NAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Load...",                    IDM_EFF_LOAD
+        MENUITEM "&Save",                       IDM_EFF_SAVE
+        MENUITEM "Save &As...",                 IDM_EFF_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "&Edit...",                    IDM_EFF_EDIT
+        MENUITEM "Edit &Parameters...",         IDM_EFF_EDIT_PARMS
+        MENUITEM "&Channels",                   IDM_SEL_MIDICHN
+        MENUITEM SEPARATOR
+        MENUITEM "C&hain After...",             IDM_CHAIN_AFTER
+        MENUITEM "&Unchain",                    IDM_UNCHAIN
+        MENUITEM SEPARATOR
+        MENUITEM "Ne&xt Program\tAlt+N",        IDM_PROGRAM_NEXT
+        MENUITEM "Pre&vious Program\tAlt+P",    IDM_PROGRAM_PREV
+        MENUITEM "&Programs",                   IDM_EFF_PROGRAM_0
+    END
+    POPUP "E&ngine"
+    BEGIN
+        MENUITEM "&Run",                        IDM_ENG_START
+        MENUITEM "R&estart",                    IDM_ENGINE_RESTART
+    END
+    POPUP "&Devices"
+    BEGIN
+        MENUITEM "&MIDI...",                    IDM_MIDIDEV
+        MENUITEM "&Wave...",                    IDM_WAVEDEV
+        MENUITEM SEPARATOR
+        MENUITEM "&Asio Control Panel...",      IDM_ASIO_CPL
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "&MIDI Keyboard",              IDM_MIDIKEYB
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About vsthost...",           ID_APP_ABOUT
+    END
+END
+
+IDR_EFFECTTYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New Effect\tCtrl+N",         ID_FILE_NEW
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Effect"
+    BEGIN
+        MENUITEM "&Name",                       IDM_EFF_PROGRAM_NAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Load...",                    IDM_EFF_LOAD
+        MENUITEM "&Save",                       IDM_EFF_SAVE
+        MENUITEM "Save &As...",                 IDM_EFF_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "&Channels",                   IDM_SEL_MIDICHN
+        MENUITEM SEPARATOR
+        MENUITEM "C&hain After...",             IDM_CHAIN_AFTER
+        MENUITEM "&Unchain",                    IDM_UNCHAIN
+        MENUITEM SEPARATOR
+        MENUITEM "Ne&xt Program\tAlt+N",        IDM_PROGRAM_NEXT
+        MENUITEM "Pre&vious Program\tAlt+P",    IDM_PROGRAM_PREV
+        MENUITEM "&Programs",                   IDM_EFF_PROGRAM_0
+    END
+    POPUP "E&ngine"
+    BEGIN
+        MENUITEM "&Run",                        IDM_ENG_START
+        MENUITEM "R&estart",                    IDM_ENGINE_RESTART
+    END
+    POPUP "&Devices"
+    BEGIN
+        MENUITEM "&MIDI...",                    IDM_MIDIDEV
+        MENUITEM "&Wave...",                    IDM_WAVEDEV
+        MENUITEM SEPARATOR
+        MENUITEM "&Asio Control Panel...",      IDM_ASIO_CPL
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "&MIDI Keyboard",              IDM_MIDIKEYB
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+        MENUITEM SEPARATOR
+        MENUITEM "&Resize",                     IDM_EFF_RESIZE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About vsthost...",           ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "N",            IDM_PROGRAM_NEXT,       VIRTKEY, ALT, NOINVERT
+    "P",            IDM_PROGRAM_PREV,       VIRTKEY, ALT, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 63
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About VSTHost"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Sample VST Host Version 1.15",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 2001-2004 H. Seib",IDC_STATIC,40,20,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+    LTEXT           "VST PlugIn Technology by Steinberg",IDC_STATIC,40,35,
+                    130,8
+    LTEXT           "ASIO Technology by Steinberg",IDC_STATIC,40,45,130,8
+END
+
+IDD_MIDIDEV DIALOG DISCARDABLE  0, 0, 219, 73
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Select MIDI Devices"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Input Port:",IDC_STATIC,7,9,48,8
+    COMBOBOX        IDC_INPUTPORT,55,7,157,86,CBS_DROPDOWNLIST | 
+                    CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Pass Through to Output",IDC_PASSTHRU,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,22,205,10
+    LTEXT           "&Output Port:",IDC_STATIC,7,35,48,8
+    COMBOBOX        IDC_OUTPUTPORT,55,33,157,68,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,103,52,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,162,52,50,14
+END
+
+IDD_PARMS DIALOG DISCARDABLE  0, 0, 221, 155
+STYLE DS_3DLOOK | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_PARMLIST,7,7,169,128,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Slider1",IDC_PARMVAL,"msctls_trackbar32",TBS_VERT | 
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,189,7,15,116
+    LTEXT           "Current Parameter Text",IDC_PARMTEXT,7,136,207,12,
+                    SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "Value",IDC_RVALUE,179,126,35,8,WS_DISABLED
+END
+
+IDD_EFFPGNAME DIALOG DISCARDABLE  0, 0, 187, 54
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Set Program Name"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
+    LTEXT           "Update current program name:",IDC_STATIC,7,10,115,8
+    EDITTEXT        IDC_PROGNAME,7,24,115,14,ES_AUTOHSCROLL
+END
+
+IDD_WAVEDEV DIALOG DISCARDABLE  0, 0, 219, 82
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Select Wave Devices"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,103,58,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,162,58,50,14
+    LTEXT           "&Input port: ",IDC_STATIC,7,9,48,8
+    COMBOBOX        IDC_INPUTPORT,55,7,157,86,CBS_DROPDOWNLIST | 
+                    CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Output Port:",IDC_STATIC,7,26,48,8
+    COMBOBOX        IDC_OUTPUTPORT,55,24,157,68,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Buffer Size:",IDC_STATIC,7,43,34,8
+    COMBOBOX        IDC_BUFSIZE,55,41,157,92,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_EFFMIDICHN DIALOG DISCARDABLE  0, 0, 187, 98
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "MIDI Channels"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
+    LTEXT           "Effect accepts input from the following MIDI channels:",
+                    IDC_STATIC,7,7,119,24
+    CONTROL         "1",IDC_CHN0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,31,
+                    20,10
+    CONTROL         "2",IDC_CHN1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,40,
+                    20,10
+    CONTROL         "3",IDC_CHN2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,49,
+                    20,10
+    CONTROL         "4",IDC_CHN3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,58,
+                    20,10
+    CONTROL         "5",IDC_CHN4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,31,
+                    20,10
+    CONTROL         "6",IDC_CHN5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,40,
+                    20,10
+    CONTROL         "7",IDC_CHN6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,49,
+                    20,10
+    CONTROL         "8",IDC_CHN7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,58,
+                    20,10
+    CONTROL         "9",IDC_CHN8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,31,
+                    20,10
+    CONTROL         "10",IDC_CHN9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,
+                    40,23,10
+    CONTROL         "11",IDC_CHN10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,
+                    49,23,10
+    CONTROL         "12",IDC_CHN11,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,
+                    58,23,10
+    CONTROL         "13",IDC_CHN12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
+                    31,23,10
+    CONTROL         "14",IDC_CHN13,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
+                    40,23,10
+    CONTROL         "15",IDC_CHN14,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
+                    49,23,10
+    CONTROL         "16",IDC_CHN15,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,103,
+                    58,23,10
+    PUSHBUTTON      "Clear All",IDC_CLEAR,68,77,50,14
+    PUSHBUTTON      "Set All",IDC_SET,7,77,50,14
+END
+
+IDD_EFFCHAIN DIALOG DISCARDABLE  0, 0, 224, 99
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Chain Effect after..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_EFFECTS,7,7,156,85,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,167,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,167,24,50,14
+END
+
+IDD_MIDIKEYB DIALOGEX 40, 30, 355, 44
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "MIDI Keyboard"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_MKBDCTRL,"{1BB35578-331C-11D1-801A-0004ACEC1B53}",
+                    WS_TABSTOP,0,0,355,44
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,15,0,1
+ PRODUCTVERSION 1,15,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "VSTHost - Sample VST Host\0"
+            VALUE "FileVersion", "1.15\0"
+            VALUE "InternalName", "vsthost\0"
+            VALUE "LegalCopyright", "Copyright (C) 2001-2004 H. Seib\0"
+            VALUE "LegalTrademarks", "ASIO & VST PlugIn Technology by Steinberg\0"
+            VALUE "OriginalFilename", "vsthost.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "VSTHost - Sample VST Host\0"
+            VALUE "ProductVersion", "1.15\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 56
+    END
+
+    IDD_MIDIDEV, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 212
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 66
+    END
+
+    IDD_PARMS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 214
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 148
+    END
+
+    IDD_EFFPGNAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+
+    IDD_WAVEDEV, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 212
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 75
+    END
+
+    IDD_EFFMIDICHN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    IDD_EFFCHAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 217
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 92
+    END
+
+    IDD_MIDIKEYB, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 348
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 37
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_MIDIKEYB DLGINIT
+BEGIN
+    IDC_MKBDCTRL, 0x376, 187, 0
+0x001a, 0x0000, 0x0043, 0x006f, 0x0070, 0x0079, 0x0072, 0x0069, 0x0067, 
+0x0068, 0x0074, 0x0020, 0x0028, 0x0063, 0x0029, 0x0020, 0x0031, 0x0039, 
+0x0039, 0x0037, 0x0020, 0x0048, 0x002e, 0x0020, 0x0053, 0x0065, 0x0069, 
+0x0062, 0x0000, 0x0001, 0x3ab4, 0x0000, 0x0747, 0x0000, 0x00ef, 0x0000, 
+0x4d0d, 0x6469, 0x2069, 0x654b, 0x6279, 0x616f, 0x6472, 0x0000, 0x0000, 
+0xffff, 0x00ff, 0x0300, 0xe352, 0x910b, 0xce8f, 0x9d11, 0x00e3, 0x00aa, 
+0xb84b, 0x0151, 0x0000, 0x9000, 0xd001, 0x0101, 0x0d00, 0x534d, 0x5320, 
+0x6e61, 0x2073, 0x6553, 0x6972, 0x0066, 0x0100, 0x0000, 0x0018, 0x0055, 
+0x0000, 0x0100, 0x0003, 0x6401, 0x0200, 0x3000, 0x3c00, 0xc100, 0x0000, 
+0xff00, 0x003f, 0xfe20, 0xff00, 0x0100, 0x0150, 0x0000, 0xff00, 0x003f, 
+0x0200, 0xff00, 0x0100, "\115" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "vsthost"
+    IDR_VSTHOSTYPE          "\nVsthos\nVsthos"
+    IDS_PROPERTIES          "Properties"
+    IDS_MKBDNOTREG          "The Midi Keyboard control could not be loaded.\nThis little gimmick can be found in the VSTHost package.\nOpen a command line in the directory where you put it and enter\n  regsvr32 mkbd.ocx\nto install it."
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "vsthost"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "Load a new VST effect\nNew Effect"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDM_EFF_EDIT            "Open Effect Editor\nEffect Edit"
+    IDM_EFF_PROGRAM_NAME    "Set the current program's name\nProgram Name"
+    IDM_EFF_EDIT_PARMS      "Edit Parameters directly\nEdit Parameters"
+    IDM_EFF_INFO            "Activate Effect Information Window\nInfo Window"
+    IDM_EFF_RESIZE          "Resize to effect's specifications\nResize"
+    IDM_EFF_CHECKSIZE       "Make sure that the window isn't too large\ncheck size"
+    IDM_MIDIDEV             "Select the used MIDI Devices\nMIDI Devices"
+    IDM_WAVEDEV             "Select the used Wave Devices\nWave Devices"
+    IDM_EFFECT_LOAD         "Loads an Effect Bank from Disk\nLoad"
+    IDM_EFFECT_SAVE         "Saves Effect Bank to Disk\nSave"
+    IDM_EFFECT_SAVEAS       "Saves current Effect Bank to Disk\nSave As"
+    IDM_EFF_LOAD            "Load an Effect Bank (.fxb)\nLoad Bank"
+    IDM_EFF_SAVE            "Save an Effect Bank (.fxb)\nSave Bank"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_MIDINONE            "* No MIDI *"
+    IDS_WAVENONE            "* No Wave *"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDM_EFF_SAVEAS          "Saves the Effect Bank (.fxb) to a new name\nSave Bank As"
+    IDM_ENG_START           "Starts or stops the VST Engine\nRun"
+    IDM_SEL_MIDICHN         "Select used MIDI Channel(s)\nChannels"
+    IDM_ENGINE_RESTART      "Restart Engine after Failure\nRestart Engine"
+    IDM_ASIO_CPL            "ASIO Control Panel\nASIO Control Panel"
+    IDM_CHAIN_AFTER         "Chain Effect after another one\nChain After"
+    IDM_UNCHAIN             "Remove effect from chain\nUnchain"
+    IDM_PROGRAM_NEXT        "Switch to next program\nNext Program"
+    IDM_PROGRAM_PREV        "Switch to previous program\nPrevious Program"
+    IDM_MIDIKEYB            "Shows / Hides the MIDI Keyboard\nMIDI Keyboard"
+END
+
+#endif    // Englisch (USA) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Österreich) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEA)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN_AUSTRIAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_MDIBACKGND          BITMAP  DISCARDABLE     "res\\backgnd.bmp"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\vsthost.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Deutsch (Österreich) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\vsthost.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
