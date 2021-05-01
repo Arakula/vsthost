@@ -1309,22 +1309,24 @@ return false;
 /* OnUpdateSampleRate : called when the effect calls updateSampleRate()      */
 /*****************************************************************************/
 
-void CVSTHost::OnUpdateSampleRate(int nEffect)
+long CVSTHost::OnUpdateSampleRate(int nEffect)
 {
 CEffect *pEffect = GetAt(nEffect);
 if (pEffect)
   pEffect->EffSetSampleRate(fSampleRate);
+return (long)fSampleRate;
 }
 
 /*****************************************************************************/
 /* OnUpdateBlockSize : called when the effect calls updateBlockSize()        */
 /*****************************************************************************/
 
-void CVSTHost::OnUpdateBlockSize(int nEffect)
+long CVSTHost::OnUpdateBlockSize(int nEffect)
 {
 CEffect *pEffect = GetAt(nEffect);
 if (pEffect)
   pEffect->EffSetBlockSize(lBlockSize);
+return lBlockSize;
 }
 
 /*****************************************************************************/

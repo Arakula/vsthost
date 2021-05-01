@@ -573,9 +573,9 @@ public:
     virtual bool OnWillProcessReplacing(int nEffect) { return false; }
     virtual long OnGetOutputLatency(int nEffect) { return 0; }
     virtual long OnGetInputLatency(int nEffect) { return 0; }
-	virtual void OnUpdateBlockSize(int nEffect);
+	virtual long OnUpdateBlockSize(int nEffect);
     virtual long OnTempoAt(int nEffect, long pos) { return 0; }
-	virtual void OnUpdateSampleRate(int nEffect);
+	virtual long OnUpdateSampleRate(int nEffect);
 	virtual bool OnSizeWindow(int nEffect, long width, long height);
 	virtual bool OnNeedIdle(int nEffect);
 	virtual long OnAudioMasterCallback(int nEffect, long opcode, long index, long value, void *ptr, float opt);
